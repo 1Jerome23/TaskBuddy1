@@ -14,6 +14,7 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -55,26 +56,38 @@ public class MainActivity extends AppCompatActivity {
 
 
         RegisterSubmit.setOnClickListener(new View.OnClickListener() {
-
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, login.class);
-                startActivity(intent);
-
                 String fullName = RegisterFullName.getText().toString().trim();
                 String email = RegisterEmail.getText().toString().trim();
                 String password = RegisterPassword.getText().toString();
 
                 if (TextUtils.isEmpty(fullName)) {
                     RegisterFullName.setError("Please enter Full Name");
-                } else if (TextUtils.isEmpty(email)) {
-                    RegisterEmail.setError("Please enter Email");
+                } else if (!isValidEmail(email)) { // This line checks the email's validity
+                    RegisterEmail.setError("Please enter a valid Email Address");
+                    Toast.makeText(getApplicationContext(), "Please enter a valid email address", Toast.LENGTH_SHORT).show();
+
                 } else if (TextUtils.isEmpty(password)) {
                     RegisterPassword.setError("Please enter Password");
                 } else {
-                    addDataToFirestore(fullName, email, password);
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    CollectionReference usersRef = db.collection("UserData");
+
+                    usersRef.whereEqualTo("email", email)
+                            .get()
+                            .addOnSuccessListener(queryDocumentSnapshots -> {
+                                if (queryDocumentSnapshots.isEmpty()) {
+                                    addDataToFirestore(fullName, email, password);
+                                } else {
+                                    RegisterEmail.setError("Email already in use");
+                                    Toast.makeText(getApplicationContext(), "Email is already in use", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("FirestoreError", "Error querying Firestore: " + e.getMessage());
+                            });
                 }
             }
-
         });
 
         SpannableString spannableString = new SpannableString(RegisterMessage.getText());
@@ -111,15 +124,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentReference documentReference) {
 
-                Toast.makeText(MainActivity.this, "Your Course has been added to Firebase Firestore", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "You have successfully registered", Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
 
-                Toast.makeText(MainActivity.this, "Fail to add course \n" + e, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Fail to add User \n" + e, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    private boolean isValidEmail(String email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 }
 
