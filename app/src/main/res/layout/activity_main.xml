@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:gravity="center"
     tools:context=".MainActivity">
-
+//AAAAA
 
     <ImageView
         android:id="@+id/RegisterLogo"
