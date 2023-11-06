@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="452dp"
+        android:layout_height="112dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/orange" />
+
+        <ImageView
+            android:id="@+id/homepage_icon"
+            android:layout_width="112dp"
+            android:layout_height="152dp"
+            android:layout_gravity="start|center_vertical"
+            app:srcCompat="@drawable/icon" />
+
+        <TextView
+            android:id="@+id/homepage_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="25dp"
+            android:fontFamily="@font/moresugar"
+            android:text="Home"
+            android:textSize="30dp" />
+
+        <ImageButton
+            android:id="@+id/homepage_add"
+            android:background="@android:color/transparent"
+            android:layout_gravity="end|center"
+            android:layout_marginRight="100dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/baseline_add_24" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/homepage_search"
+            android:layout_width="138dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="30dp"
+            android:layout_weight="2"
+            android:drawableStart="@drawable/baseline_search_24"
+            android:ems="10"
+            android:fontFamily="@font/onefont"
+            android:hint="Search"
+            android:maxLines="1" />
+
+        <Button
+            android:id="@+id/homepage_sort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:backgroundTint="#FFC16E"
+            android:text="Sort" />
+        <Button
+            android:id="@+id/homepage_new_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="30dp"
+            android:backgroundTint="#FFC16E"
+            android:layout_marginRight="10dp"
+            android:text="Filter" />
+
+    </LinearLayout>
+
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+    </HorizontalScrollView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="459dp"
+        android:ellipsize="marquee"
+        android:scrollbars="horizontal"
+        android:scrollHorizontally="true"
+        android:singleLine="true" />
+
+    <FrameLayout
+        android:layout_width="400dp"
+        android:layout_height="100dp">
+
+        <ImageView
+            android:id="@+id/homepage_footer"
+            android:layout_width="wrap_content"
+            android:layout_height="120dp"
+            app:srcCompat="@drawable/footer" />
+
+        <ImageButton
+            android:id="@+id/homepage_homepage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:layout_marginLeft="60dp"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/footer_darkenedlist" />
+
+        <ImageButton
+            android:id="@+id/homepage_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:layout_marginLeft="280dp"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/footer_person" />
+
+    </FrameLayout>
+
+</LinearLayout>

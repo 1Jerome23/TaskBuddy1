@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/not_done_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="NOT DONE"
+        android:textColor="#FF0000" /> <!-- Red color for "NOT DONE" -->
+
+    <TextView
+        android:id="@+id/in_progress_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="IN PROGRESS"
+        android:textColor="#00FF00" /> <!-- Green color for "IN PROGRESS" -->
+
+    <TextView
+        android:id="@+id/completed_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="COMPLETED"
+        android:textColor="#0000FF" /> <!-- Blue color for "COMPLETED" -->
+</LinearLayout>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ImageView
+        android:id="@+id/profile_header"
+        android:layout_width="475dp"
+        android:layout_height="344dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="-30dp"
+        android:layout_marginTop="-134dp"
+        android:layout_marginEnd="-34dp"
+        app:srcCompat="@drawable/orange" />
+
+    <ImageView
+        android:id="@+id/profile_icon"
+        android:layout_width="94dp"
+        android:layout_height="97dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="-1dp"
+        app:srcCompat="@drawable/icon" />
+
+    <TextView
+        android:id="@+id/profile_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="154dp"
+        android:layout_marginTop="29dp"
+        android:fontFamily="@font/moresugar"
+        android:text="Profile"
+        android:textSize="30dp" />
+
+    <Button
+        android:id="@+id/profile_edit"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="107dp"
+        android:layout_marginTop="390dp"
+        android:background="@drawable/button"
+        android:fontFamily="@font/onefont"
+        android:text="Edit Profile"
+        android:textSize="18dp"
+        app:backgroundTint="@null" />
+
+    <Button
+        android:id="@+id/profile_logout"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="110dp"
+        android:layout_marginBottom="176dp"
+        android:background="@drawable/button"
+        android:fontFamily="@font/onefont"
+        android:text="Logout"
+        android:textSize="18dp"
+        app:backgroundTint="@null" />
+
+    <Button
+        android:id="@+id/profile_change_pw"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="110dp"
+        android:layout_marginBottom="246dp"
+        android:background="@drawable/button"
+        android:fontFamily="@font/onefont"
+        android:text="Change Password"
+        android:textSize="18dp"
+        app:backgroundTint="@null" />
+
+    <TextView
+        android:id="@+id/profile_change_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="250dp"
+        android:fontFamily="@font/onefont"
+        android:text="Merylle Shayne Salvador"
+        android:textSize="30dp" />
+
+    <TextView
+        android:id="@+id/profile_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="332dp"
+        android:fontFamily="@font/onefont"
+        android:text="Email : merylle_salvador@dlsu.edu.ph" />
+
+    <FrameLayout
+        android:layout_width="400dp"
+        android:layout_marginTop="661.9dp"
+        android:layout_height="110dp">
+
+        <ImageView
+            android:id="@+id/profile_footer"
+            android:layout_width="wrap_content"
+            android:layout_height="120dp"
+            app:srcCompat="@drawable/footer" />
+
+        <ImageButton
+            android:id="@+id/profile_homepage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:layout_marginLeft="60dp"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/baseline_checklist_24" />
+
+        <ImageButton
+            android:id="@+id/profile_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:layout_marginLeft="280dp"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/baseline_person_24" />
+
+    </FrameLayout>
+
+
+</RelativeLayout>

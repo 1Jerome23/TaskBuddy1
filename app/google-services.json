@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "685744388156",
+    "project_id": "mco3-94435",
+    "storage_bucket": "mco3-94435.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685744388156:android:de826322a394018b80ab39",
+        "android_client_info": {
+          "package_name": "com.mobdeve.s17.TaskBuddy.mco1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAls5Q-h3ROUMlokZ6rSZ8CFIvgd7excts"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

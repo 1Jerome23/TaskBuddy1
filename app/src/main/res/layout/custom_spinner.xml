@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/high_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="High"
+        android:textColor="#FF0000" /> <!-- Red color for "High" -->
+
+    <TextView
+        android:id="@+id/medium_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Medium"
+        android:textColor="#00FF00" /> <!-- Green color for "Medium" -->
+
+    <TextView
+        android:id="@+id/low_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Low"
+        android:textColor="#0000FF" /> <!-- Blue color for "Low" -->
+</LinearLayout>

@@ -1,0 +1,106 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".MainActivity">
+
+
+    <ImageView
+        android:id="@+id/LoginLogo"
+        android:layout_width="310dp"
+        android:layout_height="168dp"
+        android:paddingLeft="40dp"
+        android:paddingBottom="50dp"
+        app:srcCompat="@drawable/firstpage" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp" /> <!-- Space between Full Name and Email -->
+
+    <EditText
+        android:id="@+id/LoginEmail"
+        android:drawablePadding="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border"
+        android:drawableStart="@drawable/baseline_email_24"
+        android:ems="10"
+        android:hint=" Email"
+        android:maxLines="1"
+        android:fontFamily="@font/onefont"
+        android:inputType="text"
+        android:padding="15dp"
+        android:paddingStart="12dp"
+        android:paddingTop="15dp"
+        android:paddingEnd="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.481" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp" /> <!-- Space between Email and Password -->
+
+    <EditText
+        android:id="@+id/LoginPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Password"
+        android:drawablePadding="5dp"
+        android:maxLines="1"
+        android:fontFamily="@font/onefont"
+        android:inputType="textPassword"
+        android:paddingTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/border"
+        android:drawableStart="@drawable/baseline_lock_24"
+        android:padding="15dp"
+        android:paddingEnd="12dp"
+        tools:layout_editor_absoluteY="401dp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" /> <!-- Space between Password and Register Button -->
+
+    <Button
+        android:id="@+id/LoginSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button"
+        android:text="Login"
+        android:fontFamily="@font/onefont"
+        android:textColor="@color/white"
+        app:backgroundTint="@null"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="492dp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <!-- Space between Register Button and "Already have an account?" Text -->
+    <TextView
+        android:id="@+id/LoginMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/onefont"
+        android:text="Don't have an account yet? Register now."
+        app:layout_constraintEnd_toEndOf="parent"
+        android:clickable="true"
+        android:onClick="onTextViewClick"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="578dp" />
+
+
+</LinearLayout>

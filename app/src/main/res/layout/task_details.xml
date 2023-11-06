@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="452dp"
+        android:layout_height="112dp">
+
+        <!-- Orange background -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/orange" />
+
+        <!-- Icon -->
+        <ImageView
+            android:id="@+id/homepage_icon"
+            android:layout_width="112dp"
+            android:layout_height="152dp"
+            android:layout_gravity="start|center_vertical"
+            app:srcCompat="@drawable/icon" />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/homepage_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="25dp"
+            android:fontFamily="@font/moresugar"
+            android:text="Task Details"
+            android:textSize="30dp" />
+
+    </FrameLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="560dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/taskDetailsLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/task_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="50dp"
+                android:fontFamily="@font/onefont"
+                android:maxLines="2"
+                android:text="Task Name"
+                android:textSize="40sp" />
+
+            <TextView
+                android:id="@+id/task_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/onefont"
+                android:text="Task Description"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/task_due"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/onefont"
+                android:text="Due Date"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/task_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/onefont"
+                android:text="Task Date"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/task_textStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/onefont"
+                android:text="Status"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/task_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/onefont"
+                android:text="Task Status"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/task_duepriority"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/onefont"
+                android:text="Priority"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/task_priority"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/onefont"
+                android:text="Task Priority"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/task_attachment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/onefont"
+                android:text="Task Attachment"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/add_file"
+                android:layout_width="295dp"
+                android:layout_height="45dp"
+                app:srcCompat="@android:drawable/screen_background_dark_transparent" />
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/Back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:backgroundTint="#FFC16D"
+            android:text="Back" />
+
+        <Button
+            android:id="@+id/Edit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:backgroundTint="#FFC16D"
+            android:text="Edit" />
+
+        <Button
+            android:id="@+id/Delete_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="30dp"
+            android:backgroundTint="#FF7165"
+            android:text="Delete" />
+    </LinearLayout>
+
+
+</LinearLayout>

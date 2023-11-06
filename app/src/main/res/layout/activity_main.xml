@@ -1,0 +1,125 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".MainActivity">
+
+
+    <ImageView
+        android:id="@+id/RegisterLogo"
+        android:layout_width="310dp"
+        android:layout_height="168dp"
+        android:paddingLeft="40dp"
+        android:paddingBottom="50dp"
+        app:srcCompat="@drawable/firstpage" />
+
+    <EditText
+        android:id="@+id/RegisterFullName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Full Name"
+        android:inputType="text"
+        android:maxLines="1"
+        android:fontFamily="@font/onefont"
+        android:drawablePadding="5dp"
+        android:paddingBottom="15dp"
+        android:background="@drawable/border"
+        android:drawableStart="@drawable/footer_icon"
+        android:paddingTop="15dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="261dp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp" /> <!-- Space between Full Name and Email -->
+
+    <EditText
+        android:id="@+id/RegisterEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:maxLines="1"
+        android:hint=" Email"
+        android:inputType="text"
+        android:fontFamily="@font/onefont"
+        android:paddingStart="12dp"
+        android:drawablePadding="5dp"
+        android:background="@drawable/border"
+        android:paddingTop="15dp"
+        android:drawableStart="@drawable/baseline_email_24"
+        android:padding="15dp"
+        android:paddingEnd="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.481" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp" /> <!-- Space between Email and Password -->
+
+    <EditText
+        android:id="@+id/RegisterPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border"
+        android:drawableStart="@drawable/baseline_lock_24"
+        android:ems="10"
+        android:fontFamily="@font/onefont"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        android:padding="15dp"
+        android:paddingTop="20dp"
+        android:drawablePadding="5dp"
+        android:paddingEnd="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="401dp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" /> <!-- Space between Password and Register Button -->
+
+    <Button
+        android:id="@+id/RegisterSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button"
+        android:text="Register"
+        android:fontFamily="@font/onefont"
+        android:textColor="@color/white"
+        app:backgroundTint="@null"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="492dp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" /> <!-- Space between Register Button and "Already have an account?" Text -->
+
+    <TextView
+        android:id="@+id/RegisterMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/onefont"
+        android:text="Already have an account? Log In "
+        android:clickable="true"
+        android:onClick="onTextViewClick"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="578dp" />
+
+</LinearLayout>
