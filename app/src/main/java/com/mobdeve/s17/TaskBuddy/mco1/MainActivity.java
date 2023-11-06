@@ -1,4 +1,7 @@
 package com.mobdeve.s17.TaskBuddy.mco1;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
+import com.google.firebase.firestore.auth.User;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,14 +40,37 @@ public class MainActivity extends AppCompatActivity {
         RegisterSubmit = (Button) findViewById(R.id.RegisterSubmit);
         RegisterMessage = (TextView) findViewById(R.id.RegisterMessage);
 
+        FirebaseFirestore db;
+
+        db = FirebaseFirestore.getInstance();
         RegisterSubmit.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, login.class);
                 startActivity(intent);
 
-                Toast.makeText(getApplicationContext(), "Registered Successfully", Toast.LENGTH_SHORT).show();
+                String fullName = RegisterFullName.getText().toString().trim();
+                String email = RegisterEmail.getText().toString().trim();
+                String password = RegisterPassword.getText().toString();
 
+                if (fullName.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(MainActivity.this, "Please fill in all the fields", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                CollectionReference UsersCollection = db.collection("User");
+                DocumentReference Users = UsersCollection.document();
+
+                Users.collection("Users")
+                        .add(new User(fullName, email, password))
+                        .addOnSuccessListener(documentReference -> {
+                            Toast.makeText(MainActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
+
+                            Intent intent = new Intent(MainActivity.this, login.class);
+                            startActivity(intent);
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(MainActivity.this, "Registration failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        });
             }
         });
         SpannableString spannableString = new SpannableString(RegisterMessage.getText());

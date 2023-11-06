@@ -76,6 +76,7 @@ public class add_task extends AppCompatActivity {
         ImageButton add_homepage = findViewById(R.id.add_homepage);
         ImageButton add_profile = findViewById(R.id.add_profile);
 
+
         add_homepage.setOnClickListener(new View.OnClickListener(){
 
             public void onClick(View v){
