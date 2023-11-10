@@ -41,6 +41,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
@@ -75,11 +78,6 @@ public class add_task extends AppCompatActivity {
     ImageButton add_calendar;
     TextView add_priority_task;
     TextView add_status_task;
-    Bitmap bitmap;
-    private Uri selectedImageUri;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,52 +198,33 @@ public class add_task extends AppCompatActivity {
 
                 Task task = new Task(taskName, description, date, status, priority);
 
-                // Now you can use the 'task' object as needed, for example, save it to Firebase
-                saveTaskToFirebase(task);
+                saveTaskToFirestore(task);
             }
         });
     }
-    private void saveTaskToFirebase(Task task) {
-        // Assuming you have a reference to the Firebase database
-        DatabaseReference tasksRef = FirebaseDatabase.getInstance().getReference().child("UserTask");
+    private void saveTaskToFirestore(Task task) {
+        // Assuming you have a reference to the Firestore database
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference tasksRef = db.collection("UserTask");
 
-        // Push the task to generate a unique key
-        DatabaseReference newTaskRef = tasksRef.push();
-
-        // Set the value of the task under the unique key
-        newTaskRef.setValue(task)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+        // Add the task to Firestore
+        tasksRef.add(task)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("MyApp", "Task saved to Firebase successfully");
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d("MyApp", "Task saved to Firestore successfully with ID: " + documentReference.getId());
                         // Handle success, if needed
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.e("MyApp", "Error saving task to Firebase: " + e.getMessage());
+                        Log.e("MyApp", "Error saving task to Firestore: " + e.getMessage());
                         // Handle failure, if needed
                     }
                 });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == FILE_PICKER_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            selectedImageUri = data.getData();
-
-            imageView.setImageURI(selectedImageUri);
-
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
     public class CustomSpinnerAdapter extends ArrayAdapter<String> {
 
         private int[] colors;
