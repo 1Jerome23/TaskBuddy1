@@ -128,6 +128,9 @@
                 android:background="@drawable/border"
                 android:fontFamily="@font/onefont"
                 android:hint="  Input Due Date"
+                android:inputType="date"
+                android:focusable="false"
+                android:clickable="true"
                 android:paddingStart="5dp" />
 
             <Space
