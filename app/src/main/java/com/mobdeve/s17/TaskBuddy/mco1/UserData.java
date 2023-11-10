@@ -4,14 +4,23 @@ public class UserData {
         public String fullName;
         public String email;
         public String password;
+        private String id;
 
-        public UserData() {
+
+    public UserData() {
         }
         public UserData(String fullName, String email, String password) {
             this.fullName = fullName;
             this.email = email;
             this.password = password;
         }
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
         // Getters and setters (if needed)
         public String getFullName() {

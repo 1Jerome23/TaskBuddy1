@@ -1,5 +1,7 @@
 package com.mobdeve.s17.TaskBuddy.mco1;
 
+import static android.content.ContentValues.TAG;
+
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -26,27 +28,32 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
 import com.google.firebase.storage.StorageReference;
 
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Calendar;
 
 
 public class add_task extends AppCompatActivity {
     private static final int FILE_PICKER_REQUEST_CODE = 2;
-    private static final int CAMERA_REQUEST_CODE = 3;
-    private static final int REQUEST_CODE = 2;
 
     ImageView add_icon;
     TextView add_create;
@@ -69,7 +76,9 @@ public class add_task extends AppCompatActivity {
     TextView add_priority_task;
     TextView add_status_task;
     Bitmap bitmap;
-    private String savedSelectedDate;
+    private Uri selectedImageUri;
+
+
 
 
     @Override
@@ -129,6 +138,7 @@ public class add_task extends AppCompatActivity {
                 openFilePicker();
             }
         });
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -166,34 +176,80 @@ public class add_task extends AppCompatActivity {
 
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference myRef = db.getReference("UserTask");
-
         add_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Get the current user's email
-                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                if (currentUser != null) {
-                    String userEmail = currentUser.getEmail();
+                String taskName = add_name.getText().toString();
+                String date = add_due.getText().toString();
+                String description = add_details.getText().toString();
 
-                    String taskName = add_name.getText().toString();
-                    String date = add_due_date.getText().toString();
-                    String description = add_details.getText().toString();
-                    String status = add_status_task.getText().toString();
-                    String priority = add_priority_task.getText().toString();
-                    String imageKey = taskName + "_" + System.currentTimeMillis() + ".jpg";
-                    uploadImageToStorage(imageKey, bitmap);
+                final Spinner addStatusTaskSpinner = findViewById(R.id.spinner);
+                final String status = (addStatusTaskSpinner != null && addStatusTaskSpinner.getSelectedItem() != null) ?
+                        addStatusTaskSpinner.getSelectedItem().toString() : "";
 
-                    Task task = new Task(taskName, date, description, status, priority, imageKey, userEmail);
+                final Spinner spinnerSpinner = findViewById(R.id.spinner2);
+                final String priority = (spinnerSpinner != null && spinnerSpinner.getSelectedItem() != null) ?
+                        spinnerSpinner.getSelectedItem().toString() : "";
 
-                    myRef.child(userEmail).push().setValue(task);
-                }
+                String imageUrl = taskName + "_" + System.currentTimeMillis() + ".jpg";
+                Log.d("MyApp", "Selected status: " + taskName);
+                Log.d("MyApp", "Selected priority: " + date);
+                Log.d("MyApp", "Selected status: " + description);
+                Log.d("MyApp", "Selected status: " + status);
+                Log.d("MyApp", "Selected priority: " + priority);
+
+                Task task = new Task(taskName, description, date, status, priority);
+
+                // Now you can use the 'task' object as needed, for example, save it to Firebase
+                saveTaskToFirebase(task);
             }
         });
+    }
+    private void saveTaskToFirebase(Task task) {
+        // Assuming you have a reference to the Firebase database
+        DatabaseReference tasksRef = FirebaseDatabase.getInstance().getReference().child("UserTask");
+
+        // Push the task to generate a unique key
+        DatabaseReference newTaskRef = tasksRef.push();
+
+        // Set the value of the task under the unique key
+        newTaskRef.setValue(task)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("MyApp", "Task saved to Firebase successfully");
+                        // Handle success, if needed
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("MyApp", "Error saving task to Firebase: " + e.getMessage());
+                        // Handle failure, if needed
+                    }
+                });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == FILE_PICKER_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            selectedImageUri = data.getData();
+
+            imageView.setImageURI(selectedImageUri);
+
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
     public class CustomSpinnerAdapter extends ArrayAdapter<String> {
 
         private int[] colors;
-        private int selectedItem = -1; // Variable to track the selected item
+        private int selectedItem = -1;
 
         public CustomSpinnerAdapter(Context context, int resource, String[] items, int[] colors) {
             super(context, resource, items);
@@ -205,75 +261,31 @@ public class add_task extends AppCompatActivity {
         public View getDropDownView(int position, View convertView, ViewGroup parent) {
             View v = super.getDropDownView(position, convertView, parent);
 
-            // Set the background color based on the position
             if (position >= 0 && position < colors.length) {
                 v.setBackgroundColor(colors[position]);
             } else {
-                // Set the background color to the default color if position is out of bounds
                 v.setBackgroundColor(Color.WHITE);
             }
             return v;
         }
         public void setSelectedItem(int position) {
-            // Set the selected item and refresh the adapter
             selectedItem = position;
             notifyDataSetChanged();
         }
     }
-
-
 
     private void openFilePicker() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
         startActivityForResult(intent, FILE_PICKER_REQUEST_CODE);
-
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
-            Uri selectedFileUri = data.getData();
-        } else if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
-            // Handle the captured image
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-        }
-    }
-    private void uploadImageToStorage(String imageKey, Bitmap bitmap) {
-        // Convert the Bitmap to bytes
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
-
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images/" + imageKey);
-
-        UploadTask uploadTask = storageRef.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                exception.printStackTrace();
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri downloadUri) {
-                        String imageUrl = downloadUri.toString();
-
-                    }
-                });
-            }
-        });
-    }
     private void showDatePickerDialog() {
         DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 try {
-                    // Handle the selected date
                     String selectedDate = String.format("%02d/%02d/%d", monthOfYear + 1, dayOfMonth, year);
                     add_due.setText(selectedDate);
                 } catch (Exception e) {
@@ -289,14 +301,9 @@ public class add_task extends AppCompatActivity {
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        // Create a new DatePickerDialog instance
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, dateSetListener, year, month, day);
 
-        // Show the dialog
         datePickerDialog.show();
-    }
-    private void saveSelectedDate(String selectedDate) {
-        savedSelectedDate = selectedDate;
     }
 
 

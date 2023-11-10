@@ -148,23 +148,7 @@ public class homepage extends AppCompatActivity {
     private List<task_rv>getList(){
         List<task_rv> task_rvList = new ArrayList<>();
         task_rvList.add(new task_rv("ITNET HOMEWORKSSSSSSS12345", "high","complete", "01/01/23"));
-        task_rvList.add(new task_rv("MOBDEVE HOMEWORK", "medium","incomplete", "01/01/23"));
-        task_rvList.add(new task_rv("ITSRAQA HOMEWORK", "low","ongoing", "01/01/23"));
-        task_rvList.add(new task_rv("ITSYSOP HOMEWORK", "high","complete", "01/01/23"));
-        task_rvList.add(new task_rv("LCFILIB HOMEWORK", "medium","incomplete", "01/01/23"));
-        task_rvList.add(new task_rv("GESPORTS HOMEWORK", "low","ongoing", "01/01/23"));
-        task_rvList.add(new task_rv("1", "high","complete", "01/01/23"));
-        task_rvList.add(new task_rv("2", "medium","incomplete", "01/01/23"));
-        task_rvList.add(new task_rv("3", "low","ongoing", "01/01/23"));
-        task_rvList.add(new task_rv("1", "high","complete", "01/01/23"));
-        task_rvList.add(new task_rv("2", "medium","incomplete", "01/01/23"));
-        task_rvList.add(new task_rv("3", "low","ongoing", "01/01/23"));
-        task_rvList.add(new task_rv("1", "high","complete", "01/01/23"));
-        task_rvList.add(new task_rv("2", "medium","incomplete", "01/01/23"));
-        task_rvList.add(new task_rv("3", "low","ongoing", "01/01/23"));
-        task_rvList.add(new task_rv("1", "high","complete", "01/01/23"));
-        task_rvList.add(new task_rv("2", "medium","incomplete", "01/01/23"));
-        task_rvList.add(new task_rv("3", "low","ongoing", "01/01/23"));
+
         return task_rvList;
 
     }
