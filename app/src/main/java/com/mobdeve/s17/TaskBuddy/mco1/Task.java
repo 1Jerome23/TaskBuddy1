@@ -9,7 +9,6 @@ public class Task {
     public String imageUrl;
     public String uid ;
 
-
     public Task() {
     }
 
@@ -22,13 +21,6 @@ public class Task {
         this.imageUrl = imageUrl;
         this.uid = uid;
 
-    }
-    public String uid() {
-        return uid;
-    }
-
-    public void setUserUid(String userUid) {
-        this.uid = userUid;
     }
 
 }
