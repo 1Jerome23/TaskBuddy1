@@ -7,28 +7,28 @@ public class Task {
     public String status;
     public String priority;
     public String imageUrl;
-    public String userUid ;
+    public String uid ;
 
 
     public Task() {
     }
 
-    public Task(String taskName, String description, String date, String status, String priority, String imageUrl, String userUid ) {
+    public Task(String taskName, String description, String date, String status, String priority, String imageUrl, String uid ) {
         this.taskName = taskName;
         this.description = description;
         this.date = date;
         this.status = status;
         this.priority = priority;
         this.imageUrl = imageUrl;
-        this.userUid = userUid;
+        this.uid = uid;
 
     }
-    public String getUserUid() {
-        return userUid;
+    public String uid() {
+        return uid;
     }
 
     public void setUserUid(String userUid) {
-        this.userUid = userUid;
+        this.uid = userUid;
     }
 
 }

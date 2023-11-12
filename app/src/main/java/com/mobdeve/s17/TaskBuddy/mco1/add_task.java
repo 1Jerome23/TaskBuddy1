@@ -223,7 +223,7 @@ public class add_task extends AppCompatActivity {
             }
         });
     }
-    private void saveTaskToFirestore(String userUid, Task task) {
+    private void saveTaskToFirestore(String uid, Task task) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference tasksRef = db.collection("UserTask");
         task.setUserUid(uid);
