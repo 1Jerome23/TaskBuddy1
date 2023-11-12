@@ -180,6 +180,7 @@ public class add_task extends AppCompatActivity {
                 String taskName = add_name.getText().toString();
                 String date = add_due.getText().toString();
                 String description = add_details.getText().toString();
+                String imageUrl = taskName + "_" + System.currentTimeMillis() + ".jpg";
 
                 final Spinner addStatusTaskSpinner = findViewById(R.id.spinner);
                 final String status = (addStatusTaskSpinner != null && addStatusTaskSpinner.getSelectedItem() != null) ?
@@ -189,31 +190,27 @@ public class add_task extends AppCompatActivity {
                 final String priority = (spinnerSpinner != null && spinnerSpinner.getSelectedItem() != null) ?
                         spinnerSpinner.getSelectedItem().toString() : "";
 
-                String imageUrl = taskName + "_" + System.currentTimeMillis() + ".jpg";
                 Log.d("MyApp", "Selected status: " + taskName);
                 Log.d("MyApp", "Selected priority: " + date);
                 Log.d("MyApp", "Selected status: " + description);
                 Log.d("MyApp", "Selected status: " + status);
                 Log.d("MyApp", "Selected priority: " + priority);
 
-                Task task = new Task(taskName, description, date, status, priority);
+                Task task = new Task(taskName, description, date, status, priority, imageUrl);
 
                 saveTaskToFirestore(task);
             }
         });
     }
     private void saveTaskToFirestore(Task task) {
-        // Assuming you have a reference to the Firestore database
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference tasksRef = db.collection("UserTask");
 
-        // Add the task to Firestore
         tasksRef.add(task)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d("MyApp", "Task saved to Firestore successfully with ID: " + documentReference.getId());
-                        // Handle success, if needed
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
