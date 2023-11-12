@@ -58,11 +58,14 @@ public class login extends AppCompatActivity {
                             .get()
                             .addOnSuccessListener(queryDocumentSnapshots -> {
                                 if (!queryDocumentSnapshots.isEmpty()) {
+                                    String uid = queryDocumentSnapshots.getDocuments().get(0).getId();
+
                                     Intent intent = new Intent(login.this, homepage.class);
+                                    intent.putExtra("uid", uid);
                                     startActivity(intent);
+
                                     Toast.makeText(getApplicationContext(), "Log In Successfully", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    // Authentication failed
                                     Toast.makeText(getApplicationContext(), "Log In Failed", Toast.LENGTH_SHORT).show();
                                 }
                             })
@@ -72,7 +75,6 @@ public class login extends AppCompatActivity {
                 }
             }
         });
-
 
 
         //LINK INTENT

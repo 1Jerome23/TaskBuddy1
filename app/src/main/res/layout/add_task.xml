@@ -168,7 +168,7 @@
                 android:text="Attachment" />
 
 
-            <ImageView
+            <TextView
                 android:id="@+id/add_file"
                 android:layout_width="295dp"
                 android:layout_height="45dp"

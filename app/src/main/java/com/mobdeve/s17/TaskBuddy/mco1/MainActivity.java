@@ -25,6 +25,9 @@ import android.widget.Toast;
 import com.google.firebase.firestore.auth.User;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -70,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (TextUtils.isEmpty(password)) {
                     RegisterPassword.setError("Please enter Password");
                 } else {
+                    String uid = generateUniqueUid(email);
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                     CollectionReference usersRef = db.collection("UserData");
 
@@ -77,7 +81,11 @@ public class MainActivity extends AppCompatActivity {
                             .get()
                             .addOnSuccessListener(queryDocumentSnapshots -> {
                                 if (queryDocumentSnapshots.isEmpty()) {
-                                    addDataToFirestore(fullName, email, password);
+                                    addDataToFirestore(fullName, email, password, uid);
+                                    Intent intent = new Intent(MainActivity.this, homepage.class);
+                                    intent.putExtra("uid", uid);
+                                    startActivity(intent);
+
                                 } else {
                                     RegisterEmail.setError("Email already in use");
                                     Toast.makeText(getApplicationContext(), "Email is already in use", Toast.LENGTH_SHORT).show();
@@ -86,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
                             .addOnFailureListener(e -> {
                                 Log.e("FirestoreError", "Error querying Firestore: " + e.getMessage());
                             });
+
                 }
             }
         });
@@ -115,24 +124,55 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+    private String generateUniqueUid(String email) {
+        String timestamp = String.valueOf(System.currentTimeMillis());
 
-    private void addDataToFirestore(String fullName, String email, String password) {
+        String randomString = generateRandomString();
 
-        CollectionReference dbData = db.collection("UserData");
-        UserData data = new UserData(fullName,email,password);
-        dbData.add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
+        return timestamp + "_" + randomString;
+    }
 
-                Toast.makeText(MainActivity.this, "You have successfully registered", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+    private String generateRandomString() {
+        String allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        int length = 10;
 
-                Toast.makeText(MainActivity.this, "Fail to add User \n" + e, Toast.LENGTH_SHORT).show();
-            }
-        });
+        StringBuilder randomString = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(allowedChars.length());
+            randomString.append(allowedChars.charAt(index));
+        }
+
+        return randomString.toString();
+    }
+
+
+    private void addDataToFirestore(String fullName, String email, String password, String uid) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference usersRef = db.collection("UserData");
+
+        Map<String, Object> user = new HashMap<>();
+        user.put("fullName", fullName);
+        user.put("email", email);
+        user.put("password", password);
+        user.put("uid", uid);
+
+        usersRef.document(uid)
+                .set(user)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(getApplicationContext(), "User registered successfully", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle the case where adding user data to Firestore failed
+                        Log.e("FirestoreError", "Error adding user data: " + e.getMessage());
+                    }
+                });
     }
     private boolean isValidEmail(String email) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();

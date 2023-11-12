@@ -94,7 +94,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="250dp"
         android:fontFamily="@font/onefont"
-        android:text="Merylle Shayne Salvador"
+        android:text=""
         android:textSize="30dp" />
 
     <TextView

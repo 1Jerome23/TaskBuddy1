@@ -11,6 +11,7 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -48,6 +50,7 @@ import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 
 import java.io.ByteArrayOutputStream;
@@ -78,6 +81,8 @@ public class add_task extends AppCompatActivity {
     ImageButton add_calendar;
     TextView add_priority_task;
     TextView add_status_task;
+    TextView add_file;
+    public String uid = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,12 +100,20 @@ public class add_task extends AppCompatActivity {
         TextView add_text_detail = findViewById(R.id.add_text_detail);
         EditText add_details = findViewById(R.id.add_details);
         TextView add_attachments = findViewById(R.id.add_attachments);
-        ImageView imageView = findViewById(R.id.add_file);
         Button attachFileButton = findViewById(R.id.attachFileButton);
         Button add_confirm = findViewById(R.id.add_confirm);
         ImageView add_footer = findViewById(R.id.add_footer);
         ImageButton add_homepage = findViewById(R.id.add_homepage);
         ImageButton add_profile = findViewById(R.id.add_profile);
+        TextView add_file = findViewById(R.id.add_file);
+
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("uid")) {
+            uid = intent.getStringExtra("uid");
+        } else {
+            finish();
+        }
+
 
 
         add_homepage.setOnClickListener(new View.OnClickListener(){
@@ -180,8 +193,13 @@ public class add_task extends AppCompatActivity {
                 String taskName = add_name.getText().toString();
                 String date = add_due.getText().toString();
                 String description = add_details.getText().toString();
-                String imageUrl = taskName + "_" + System.currentTimeMillis() + ".jpg";
+                String imageUrl = add_file.getText().toString();
 
+                if (taskName.isEmpty() || description.isEmpty() || date.isEmpty()) {
+                    Toast Toast = null;
+                    Toast.makeText(getApplicationContext(), "TaskName, Description, and Date are required", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 final Spinner addStatusTaskSpinner = findViewById(R.id.spinner);
                 final String status = (addStatusTaskSpinner != null && addStatusTaskSpinner.getSelectedItem() != null) ?
                         addStatusTaskSpinner.getSelectedItem().toString() : "";
@@ -190,37 +208,41 @@ public class add_task extends AppCompatActivity {
                 final String priority = (spinnerSpinner != null && spinnerSpinner.getSelectedItem() != null) ?
                         spinnerSpinner.getSelectedItem().toString() : "";
 
-                Log.d("MyApp", "Selected status: " + taskName);
-                Log.d("MyApp", "Selected priority: " + date);
-                Log.d("MyApp", "Selected status: " + description);
-                Log.d("MyApp", "Selected status: " + status);
-                Log.d("MyApp", "Selected priority: " + priority);
+                if (TextUtils.isEmpty(imageUrl.trim())) {
+                    imageUrl = taskName + "_"  + ".jpg";
+                    add_file.setText(imageUrl);
+                }
 
-                Task task = new Task(taskName, description, date, status, priority, imageUrl);
+                Task task = new Task(taskName, description, date, status, priority, imageUrl, uid);
+                Log.d("MyApp", "Image URL set: " + imageUrl);
+                saveTaskToFirestore(uid, task);
 
-                saveTaskToFirestore(task);
+                Intent intent = new Intent(add_task.this, homepage.class);
+                startActivity(intent);
+                finish();
             }
         });
     }
-    private void saveTaskToFirestore(Task task) {
+    private void saveTaskToFirestore(String userUid, Task task) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference tasksRef = db.collection("UserTask");
+        task.setUserUid(uid);
 
         tasksRef.add(task)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-                        Log.d("MyApp", "Task saved to Firestore successfully with ID: " + documentReference.getId());
+                        Log.d("Firestore", "Task added with ID: " + documentReference.getId());
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.e("MyApp", "Error saving task to Firestore: " + e.getMessage());
-                        // Handle failure, if needed
+                        Log.e("Firestore", "Error adding task", e);
                     }
                 });
     }
+
 
     public class CustomSpinnerAdapter extends ArrayAdapter<String> {
 

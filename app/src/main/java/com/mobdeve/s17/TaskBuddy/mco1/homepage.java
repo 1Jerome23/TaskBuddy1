@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,6 +38,8 @@ public class homepage extends AppCompatActivity {
     ImageView homepage_footer;
     ImageButton homepage_homepage;
     ImageButton homepage_profile;
+    private String uid = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,11 +59,18 @@ public class homepage extends AppCompatActivity {
         homepage_homepage = (ImageButton) findViewById(R.id.homepage_homepage);
         homepage_profile = (ImageButton) findViewById(R.id.homepage_profile);
 
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("uid")) {
+            uid = intent.getStringExtra("uid");
+        } else {
+            finish();
+        }
 
         homepage_profile.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                 Intent intent = new Intent(homepage.this, profile.class);
+                intent.putExtra("uid", uid);
                 startActivity(intent);
             }
         });
@@ -70,6 +80,7 @@ public class homepage extends AppCompatActivity {
 
             public void onClick(View v) {
                 Intent intent = new Intent(homepage.this, add_task.class);
+                intent.putExtra("uid", uid);
                 startActivity(intent);
             }
         });
