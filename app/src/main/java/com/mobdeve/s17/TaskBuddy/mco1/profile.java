@@ -82,6 +82,7 @@ public class profile extends AppCompatActivity {
 
                 public void onClick(View v) {
                     Intent intent = new Intent(profile.this, homepage.class);
+                    intent.putExtra("uid", uid);
                     startActivity(intent);
                 }
             });

@@ -143,6 +143,34 @@ public class add_task extends AppCompatActivity {
         statusAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
         spinner2.setAdapter(statusAdapter);
 
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                int color = colors[position];
+                selectedItemView.setBackgroundColor(color);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // Do nothing here
+            }
+        });
+
+        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                int color = colors[position];
+                selectedItemView.setBackgroundColor(color);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // Do nothing here
+            }
+        });
+
+
+
         attachFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
