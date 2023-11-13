@@ -102,7 +102,6 @@ public class edit_profile extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     String newName = edit_password.getText().toString().trim();
-                    Log.d("EditProfile", "New Name: " + newName);
 
                     if (newName.isEmpty()) {
                         Toast.makeText(getApplicationContext(), "Please enter a new name", Toast.LENGTH_SHORT).show();
@@ -116,7 +115,6 @@ public class edit_profile extends AppCompatActivity {
                                     Log.d("EditProfile", "Update successful");
                                     Toast.makeText(getApplicationContext(), "You have successfully updated your name", Toast.LENGTH_SHORT).show();
 
-                                    // Navigate to the homepage
                                     Intent intent = new Intent(edit_profile.this, homepage.class);
                                     intent.putExtra("uid", uid);
                                     startActivity(intent);
@@ -125,14 +123,11 @@ public class edit_profile extends AppCompatActivity {
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    // Log the error and notify the user of the failure
-                                    Log.e("EditProfile", "Error updating name: " + e.getMessage());
                                     Toast.makeText(getApplicationContext(), "Failed to update name", Toast.LENGTH_SHORT).show();
                                 }
                             });
                 }
             });
-
 
 
             //FOOTER INTENT
