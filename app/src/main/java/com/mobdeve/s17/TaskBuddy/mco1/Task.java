@@ -8,6 +8,8 @@ public class Task {
     public String priority;
     public String imageUrl;
     public String uid ;
+    private String userUid;
+
 
     public Task() {
     }
@@ -22,5 +24,9 @@ public class Task {
         this.uid = uid;
 
     }
+    public void setUserUid(String userUid) {
+        this.userUid = userUid;
+    }
+
 
 }

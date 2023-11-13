@@ -86,12 +86,12 @@ public class profile extends AppCompatActivity {
                 }
             });
 
-
             //BUTTON INTENT
             profile_edit.setOnClickListener(new View.OnClickListener() {
 
                 public void onClick(View v) {
                     Intent intent = new Intent(profile.this, edit_profile.class);
+                    intent.putExtra("uid", uid);
                     startActivity(intent);
                 }
             });
@@ -99,6 +99,7 @@ public class profile extends AppCompatActivity {
 
                 public void onClick(View v) {
                     Intent intent = new Intent(profile.this, password_change.class);
+                    intent.putExtra("uid", uid);
                     startActivity(intent);
                 }
             });
