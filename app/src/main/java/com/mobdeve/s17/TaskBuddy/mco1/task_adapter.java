@@ -52,6 +52,9 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
         });
 
     }
+    public List<task_rv> getTaskList() {
+        return task_rvList;
+    }
 
 
     @Override

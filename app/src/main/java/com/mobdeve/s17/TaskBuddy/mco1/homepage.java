@@ -69,6 +69,21 @@ public class homepage extends AppCompatActivity {
         } else {
             finish();
         }
+        Intent getData = getIntent();
+        if (intent != null) {
+            String taskName = getData.getStringExtra("taskName");
+            String description = getData.getStringExtra("description");
+            String date = getData.getStringExtra("date");
+            String status = getData.getStringExtra("status");
+            String priority = getData.getStringExtra("priority");
+            String imageUrl = getData.getStringExtra("imageUrl");
+            String uid = getData.getStringExtra("uid");
+
+            Task newTask = new Task(taskName, description, date, status, priority, imageUrl, uid);
+            updateRecyclerViewWithNewTask(newTask);
+
+        }
+
 
         homepage_profile.setOnClickListener(new View.OnClickListener() {
 
@@ -201,6 +216,20 @@ public class homepage extends AppCompatActivity {
     private void updateRecyclerView(String uid) {
         getList(uid);
     }
+    private void updateRecyclerViewWithNewTask(Task newTask) {
+        List<task_rv> taskList = adapter.getTaskList();
+
+        task_rv newTask_rv = new task_rv(newTask.taskName, newTask.priority, newTask.status, newTask.date);
+
+        taskList.add(newTask_rv);
+
+        adapter.notifyDataSetChanged();
+    }
+
+
+
+
+
 
 
 

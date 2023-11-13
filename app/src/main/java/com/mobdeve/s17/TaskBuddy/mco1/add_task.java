@@ -218,9 +218,18 @@ public class add_task extends AppCompatActivity {
                 saveTaskToFirestore(uid, task);
 
                 Intent intent = new Intent(add_task.this, homepage.class);
+                intent.putExtra("taskName", taskName);
+                intent.putExtra("description", description);
+                intent.putExtra("date", date);
+                intent.putExtra("status", status);
+                intent.putExtra("priority", priority);
+                intent.putExtra("imageUrl", imageUrl);
+                intent.putExtra("uid", uid);
+
                 startActivity(intent);
                 finish();
             }
+
         });
     }
     private void saveTaskToFirestore(String uid, Task task) {
