@@ -45,12 +45,6 @@ public class taskDetailsActivity extends AppCompatActivity {
             String description = intent.getStringExtra("description");
             String imageURL = intent.getStringExtra("imageUrl");
 
-            Log.d("TaskDetailsActivity", "Task Name: " + taskName);
-            Log.d("TaskDetailsActivity", "Task Date: " + taskDate);
-            Log.d("TaskDetailsActivity", "Task Status: " + taskStatus);
-            Log.d("TaskDetailsActivity", "Task Priority: " + taskPriority);
-            Log.d("TaskDetailsActivity", "Description: " + description);
-            Log.d("TaskDetailsActivity", "Image URL: " + imageURL);
 
             TextView nameTextView = findViewById(R.id.task_name);
             TextView dateTextView = findViewById(R.id.task_date);
@@ -58,6 +52,7 @@ public class taskDetailsActivity extends AppCompatActivity {
             TextView priorityTextView = findViewById(R.id.task_priority);
             TextView descriptionTextView = findViewById(R.id.task_description);
             ImageView imageView = findViewById(R.id.add_file);
+
 
             nameTextView.setText(taskName);
             dateTextView.setText(taskDate);
@@ -75,6 +70,7 @@ public class taskDetailsActivity extends AppCompatActivity {
         }
 
         Button Back_button = findViewById(R.id.Back_button);
+        Button edit_confirm = findViewById(R.id.Edit_button);
 
         Back_button.setOnClickListener(new View.OnClickListener(){
 
@@ -84,6 +80,30 @@ public class taskDetailsActivity extends AppCompatActivity {
                 finish();
             }
         });
+        edit_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get the data from the TextViews and other UI elements
+                String taskName = task_name.getText().toString();
+                String taskDate = task_date.getText().toString();
+                String taskStatus = task_status.getText().toString();
+                String taskPriority = task_priority.getText().toString();
+                String description = task_description.getText().toString();
+                String imageURL = intent.getStringExtra("imageUrl");
+
+                Intent editIntent = new Intent(taskDetailsActivity.this, edit_task.class);
+
+                editIntent.putExtra("taskName", taskName);
+                editIntent.putExtra("taskDate", taskDate);
+                editIntent.putExtra("taskStatus", taskStatus);
+                editIntent.putExtra("taskPriority", taskPriority);
+                editIntent.putExtra("description", description);
+                editIntent.putExtra("imageUrl", imageURL);
+
+                startActivity(editIntent);
+            }
+        });
+
 
 //        Button Delete_button = findViewById(R.id.Delete_button);
 //        Back_button.setOnClickListener(new View.OnClickListener(){

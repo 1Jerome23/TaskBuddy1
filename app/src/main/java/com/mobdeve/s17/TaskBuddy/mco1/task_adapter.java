@@ -61,10 +61,22 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
     public List<task_rv> getTaskList() {
         return task_rvList;
     }
+    public task_rv getTaskAt(int position) {
+        return task_rvList.get(position);
+    }
 
     public void addTask(task_rv task) {
         task_rvList.add(0, task);
         notifyDataSetChanged();
+    }
+    public interface OnEditClickListener {
+        void onEditClick(task_rv task);
+    }
+
+    private OnEditClickListener editClickListener;
+
+    public void setOnEditClickListener(OnEditClickListener listener) {
+        this.editClickListener = listener;
     }
     @Override
     public int getItemCount() {
