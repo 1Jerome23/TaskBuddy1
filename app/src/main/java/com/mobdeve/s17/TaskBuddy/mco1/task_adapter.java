@@ -62,7 +62,10 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
         return task_rvList;
     }
 
-
+    public void addTask(task_rv task) {
+        task_rvList.add(0, task);
+        notifyDataSetChanged();
+    }
     @Override
     public int getItemCount() {
         return task_rvList.size();
