@@ -217,7 +217,6 @@ public class homepage extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d("Homepage", "onResume called");
-        // Reload or set the RecyclerView adapter with the data
         updateRecyclerView(uid);
     }
 

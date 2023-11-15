@@ -80,7 +80,6 @@ public class taskDetailsActivity extends AppCompatActivity {
 
             public void onClick(View v){
                 Intent intent = new Intent (taskDetailsActivity.this,homepage.class);
-                intent.putExtra("uid", uid);
                 startActivity(intent);
                 finish();
             }
