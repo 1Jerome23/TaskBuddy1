@@ -120,6 +120,7 @@ public class add_task extends AppCompatActivity {
 
             public void onClick(View v){
                 Intent intent = new Intent (add_task.this,homepage.class);
+                intent.putExtra("uid", uid);
                 startActivity(intent);
             }
         });
@@ -127,6 +128,7 @@ public class add_task extends AppCompatActivity {
 
             public void onClick(View v){
                 Intent intent = new Intent (add_task.this,profile.class);
+                intent.putExtra("uid", uid);
                 startActivity(intent);
             }
         });

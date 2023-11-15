@@ -58,7 +58,6 @@ public class homepage extends AppCompatActivity {
         homepage_search = (EditText) findViewById(R.id.homepage_search);
         homepage_sort = (Button) findViewById(R.id.homepage_sort);
 
-
         homepage_footer = (ImageView) findViewById(R.id.homepage_footer);
         homepage_homepage = (ImageButton) findViewById(R.id.homepage_homepage);
         homepage_profile = (ImageButton) findViewById(R.id.homepage_profile);
@@ -186,9 +185,12 @@ public class homepage extends AppCompatActivity {
                                     document.getString("taskName"),
                                     document.getString("priority"),
                                     document.getString("status"),
-                                    document.getString("date")
+                                    document.getString("date"),
+                                    document.getString("description"),
+                                    document.getString("imageUrl")
                             );
                             task_rvList.add(taskRv);
+
                         } else {
                             Log.e("FirestoreError", "Document is missing expected fields");
                         }
@@ -211,6 +213,13 @@ public class homepage extends AppCompatActivity {
         adapter = new task_adapter(this, task_rvList);
         recycler_view.setAdapter(adapter);
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("Homepage", "onResume called");
+        // Reload or set the RecyclerView adapter with the data
+        updateRecyclerView(uid);
+    }
 
 
     private void updateRecyclerView(String uid) {
@@ -219,7 +228,7 @@ public class homepage extends AppCompatActivity {
     private void updateRecyclerViewWithNewTask(Task newTask) {
         List<task_rv> taskList = adapter.getTaskList();
 
-        task_rv newTask_rv = new task_rv(newTask.taskName, newTask.priority, newTask.status, newTask.date);
+        task_rv newTask_rv = new task_rv(newTask.taskName, newTask.priority, newTask.status, newTask.date, newTask.description, newTask.imageUrl);
 
         taskList.add(newTask_rv);
 

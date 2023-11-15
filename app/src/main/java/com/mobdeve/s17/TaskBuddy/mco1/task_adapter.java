@@ -2,9 +2,11 @@ package com.mobdeve.s17.TaskBuddy.mco1;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,7 +18,6 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
 
     Context context;
     List<task_rv> task_rvList;
-
     public task_adapter(Context context, List<task_rv> task_rvList){
         this.context = context;
         this.task_rvList = task_rvList;
@@ -25,6 +26,7 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_layout,parent,false);
+
         return new ViewHolder(view);
     }
 
@@ -36,6 +38,7 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
             holder.priority_rv.setText(model.getPriority());
             holder.status_rv.setText(model.getStatus());
             holder.date_rv.setText(model.getDate());
+
         }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,6 +50,9 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
                 intent.putExtra("task_date", model.getDate());
                 intent.putExtra("task_status", model.getStatus());
                 intent.putExtra("task_priority", model.getPriority());
+                intent.putExtra("description", model.getDescription());
+                intent.putExtra("imageUrl", model.getImageUrl());
+
                 context.startActivity(intent);
             }
         });
