@@ -21,7 +21,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -43,6 +45,9 @@ public class homepage extends AppCompatActivity {
     ImageButton homepage_homepage;
     ImageButton homepage_profile;
     private String uid = "";
+
+    private int currentSortOption = R.id.sort_by_letter;  // Default sorting option
+    private int currentSortOrder = R.id.sort_asc;  // Default sorting order
 
 
     @Override
@@ -121,6 +126,13 @@ public class homepage extends AppCompatActivity {
                             subMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                                 @Override
                                 public boolean onMenuItemClick(MenuItem subMenuItem) {
+                                    // Update current sort order
+                                    currentSortOption=R.id.sort_by_letter;
+                                    currentSortOrder = subMenuItem.getItemId();
+
+                                    // Perform sorting
+                                    sortTasks(currentSortOption, currentSortOrder);
+
                                     return true;
                                 }
                             });
@@ -134,6 +146,10 @@ public class homepage extends AppCompatActivity {
                             subMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                                 @Override
                                 public boolean onMenuItemClick(MenuItem subMenuItem) {
+                                    currentSortOption=R.id.sort_by_priority;
+                                    currentSortOrder = subMenuItem.getItemId();
+                                    // Perform sorting
+                                    sortTasks(currentSortOption, currentSortOrder);
                                     return true;
                                 }
                             });
@@ -147,6 +163,11 @@ public class homepage extends AppCompatActivity {
                             subMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                                 @Override
                                 public boolean onMenuItemClick(MenuItem subMenuItem) {
+                                    currentSortOption=R.id.sort_by_status;
+                                    currentSortOrder = subMenuItem.getItemId();
+                                    // Perform sorting
+                                    sortTasks(currentSortOption, currentSortOrder);
+
                                     return true;
                                 }
                             });
@@ -166,6 +187,72 @@ public class homepage extends AppCompatActivity {
         updateRecyclerView(uid);
 
     }
+
+    private void sortTasks(int sortOption, int sortOrder) {
+        List<task_rv> taskList = adapter.getTaskList();
+        Log.d("SortTasks", "Sort Option: " + sortOption + ", Sort Order: " + sortOrder);
+
+
+        if (sortOption == R.id.sort_by_letter) {
+            // Sort by A-Z
+            Collections.sort(taskList, new TaskNameComparator());
+        } else if (sortOption == R.id.sort_by_priority) {
+            // Sort by Priority
+            Collections.sort(taskList, new PriorityComparator());
+        } else if (sortOption == R.id.sort_by_status) {
+            // Sort by Status
+            Collections.sort(taskList, new StatusComparator());
+        }
+
+        // Check the sort order and reverse the list if descending
+        if (sortOrder == R.id.sort_desc) {
+            Collections.reverse(taskList);
+        }
+
+        // Log the sorted task list for debugging
+        for (task_rv task : taskList) {
+            Log.d("SortedTask", task.getName() + " - Priority: " + task.getPriority() + ", Status: " + task.getStatus());
+        }
+
+        adapter.notifyDataSetChanged();
+    }
+
+
+    private static class TaskNameComparator implements Comparator<task_rv> {
+        @Override
+        public int compare(task_rv task1, task_rv task2) {
+            return task1.getName().compareToIgnoreCase(task2.getName());
+        }
+    }
+
+    private static class PriorityComparator implements Comparator<task_rv> {
+        @Override
+        public int compare(task_rv task1, task_rv task2) {
+            // Define the custom priority order
+            List<String> priorityOrder = Arrays.asList("LOW", "MEDIUM", "HIGH");
+
+            String priority1 = task1.getPriority();
+            String priority2 = task2.getPriority();
+
+            // Compare based on custom priority order
+            return Integer.compare(priorityOrder.indexOf(priority1), priorityOrder.indexOf(priority2));
+        }
+    }
+
+    private static class StatusComparator implements Comparator<task_rv> {
+        @Override
+        public int compare(task_rv task1, task_rv task2) {
+            // Define the custom status order
+            List<String> statusOrder = Arrays.asList("NOT DONE", "IN PROGRESS", "COMPLETED");
+
+            String status1 = task1.getStatus();
+            String status2 = task2.getStatus();
+
+            // Compare based on custom status order
+            return Integer.compare(statusOrder.indexOf(status1), statusOrder.indexOf(status2));
+        }
+    }
+
     private void getList(String uid) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         List<task_rv> task_rvList = new ArrayList<>();

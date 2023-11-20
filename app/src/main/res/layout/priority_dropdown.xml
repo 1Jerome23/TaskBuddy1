@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:text="NOT DONE"
+        android:text="HIGH"
         android:textColor="#FF0000" /> <!-- Red color for "NOT DONE" -->
 
     <TextView
@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:text="IN PROGRESS"
+        android:text="MEDIUM"
         android:textColor="#00FF00" /> <!-- Green color for "IN PROGRESS" -->
 
     <TextView
@@ -26,6 +26,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:text="COMPLETED"
+        android:text="LOW"
         android:textColor="#0000FF" /> <!-- Blue color for "COMPLETED" -->
 </LinearLayout>

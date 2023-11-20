@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:text="High"
+        android:text="NOT DONE"
         android:textColor="#FF0000" /> <!-- Red color for "High" -->
 
     <TextView
@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:text="Medium"
+        android:text="IN PROGRESS"
         android:textColor="#00FF00" /> <!-- Green color for "Medium" -->
 
     <TextView
@@ -26,6 +26,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:text="Low"
+        android:text="COMPLETED"
         android:textColor="#0000FF" /> <!-- Blue color for "Low" -->
 </LinearLayout>

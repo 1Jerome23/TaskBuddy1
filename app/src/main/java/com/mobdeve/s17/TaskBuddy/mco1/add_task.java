@@ -225,9 +225,9 @@ public class add_task extends AppCompatActivity {
                 String description = add_details.getText().toString();
                 String imageUrl = add_file.getText().toString();
 
-                if (taskName.isEmpty() || description.isEmpty() || date.isEmpty()) {
+                if (taskName.isEmpty() || date.isEmpty()) {
                     Toast Toast = null;
-                    Toast.makeText(getApplicationContext(), "TaskName, Description, and Date are required", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "TaskName, and Date are required", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 final Spinner addStatusTaskSpinner = findViewById(R.id.spinner);
