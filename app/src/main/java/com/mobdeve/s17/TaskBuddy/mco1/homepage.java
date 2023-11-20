@@ -82,7 +82,7 @@ public class homepage extends AppCompatActivity {
             updateRecyclerViewWithNewTask(newTask);
 
         }
-
+//
 
         homepage_profile.setOnClickListener(new View.OnClickListener() {
 
