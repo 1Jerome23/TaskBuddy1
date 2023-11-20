@@ -36,7 +36,7 @@ public class edit_task extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("selectedTask")) {
             task_rv selectedTask = intent.getParcelableExtra("selectedTask");
-            position = intent.getIntExtra("position", -1); // Retrieve the position
+            position = intent.getIntExtra("position", -1); 
 
             edit_name = findViewById(R.id.edit_name);
             edit_due = findViewById(R.id.edit_due);
