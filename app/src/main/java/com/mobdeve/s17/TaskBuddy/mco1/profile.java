@@ -2,6 +2,7 @@ package com.mobdeve.s17.TaskBuddy.mco1;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
@@ -34,6 +35,7 @@ public class profile extends AppCompatActivity {
     ImageView profile_footer;
     ImageButton profile_homepage;
     ImageButton profile_profile;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,8 @@ public class profile extends AppCompatActivity {
         profile_footer = (ImageView) findViewById(R.id.profile_footer);
         profile_homepage = (ImageButton) findViewById(R.id.profile_homepage);
         profile_profile = (ImageButton) findViewById(R.id.profile_profile);
+
+        sharedPreferences = getSharedPreferences("prefKey", MODE_PRIVATE);
 
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("uid")) {
@@ -107,12 +111,20 @@ public class profile extends AppCompatActivity {
             profile_logout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    clearShared();
                     Intent intent = new Intent(profile.this, MainActivity.class);
                     startActivity(intent);
+
                 }
             });
 
 
         }
+    }
+    private void clearShared(){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("uid");
+        editor.commit();
+
     }
 }

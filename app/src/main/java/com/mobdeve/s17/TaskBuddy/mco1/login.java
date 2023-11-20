@@ -1,8 +1,11 @@
 package com.mobdeve.s17.TaskBuddy.mco1;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -19,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class login extends AppCompatActivity {
@@ -27,7 +31,7 @@ public class login extends AppCompatActivity {
     EditText LoginPassword;
     Button LoginSubmit;
     TextView LoginMessage;
-
+    private SharedPreferences sharedPreferences;
 
 
     @Override
@@ -41,6 +45,15 @@ public class login extends AppCompatActivity {
         LoginPassword = (EditText) findViewById(R.id.LoginPassword);
         LoginSubmit = (Button) findViewById(R.id.LoginSubmit);
         LoginMessage = (TextView) findViewById(R.id.LoginMessage);
+
+        //sharedPreferences
+        sharedPreferences = getSharedPreferences("prefKey", MODE_PRIVATE);
+
+        skipLogin();
+
+        //function is called to skip the login page if a shared preference is present
+
+
 
         //SUBMIT INTENT
         LoginSubmit.setOnClickListener(new View.OnClickListener() {
@@ -60,6 +73,9 @@ public class login extends AppCompatActivity {
                                 if (!queryDocumentSnapshots.isEmpty()) {
                                     String uid = queryDocumentSnapshots.getDocuments().get(0).getId();
 
+                                    //save uid to sharedpref
+                                    saveShared(uid);
+
                                     Intent intent = new Intent(login.this, homepage.class);
                                     intent.putExtra("uid", uid);
                                     startActivity(intent);
@@ -73,6 +89,11 @@ public class login extends AppCompatActivity {
                                 Log.e("FirestoreError", "Error querying Firestore: " + e.getMessage());
                             });
                 }
+            }
+            private void saveShared(String uid){
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("uid", uid);
+                editor.commit();
             }
         });
 
@@ -89,6 +110,16 @@ public class login extends AppCompatActivity {
         spannableString.setSpan(clickableSpan, LoginMessage.getText().toString().indexOf("Register now"), LoginMessage.getText().toString().indexOf("Register now") + "Register now".length(), 0);
         LoginMessage.setText(spannableString);
         LoginMessage.setMovementMethod(LinkMovementMethod.getInstance());
+
+
     }
+    private void skipLogin(){
+        String saved = sharedPreferences.getString("uid",null);
+        //skip to homepage if user is alr logged in
+        if(saved != null){
+            Intent intent = new Intent(login.this, homepage.class);
+            intent.putExtra("uid", saved);
+            startActivity(intent);
+        }}
 
 }
