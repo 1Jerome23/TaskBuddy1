@@ -121,6 +121,16 @@
             android:background="@android:color/transparent"
             app:srcCompat="@drawable/footer_darkenedlist" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="70dp"
+            android:layout_marginLeft="68dp"
+            android:text="Tasks"
+            android:textColor="#E59356"
+            android:fontFamily="@font/moresugar"
+            android:textSize="17sp" />
+
         <ImageButton
             android:id="@+id/homepage_profile"
             android:layout_width="wrap_content"
@@ -130,6 +140,17 @@
             android:background="@android:color/transparent"
             app:srcCompat="@drawable/footer_person" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="70dp"
+            android:layout_marginLeft="285dp"
+            android:text="Profile"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/moresugar"
+            android:textSize="17sp" />
+
     </FrameLayout>
+
 
 </LinearLayout>

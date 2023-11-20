@@ -127,6 +127,17 @@
             android:background="@android:color/transparent"
             app:srcCompat="@drawable/baseline_checklist_24" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="70dp"
+            android:layout_marginLeft="68dp"
+            android:text="Tasks"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/moresugar"
+            android:textSize="17sp" />
+
+
         <ImageButton
             android:id="@+id/profile_profile"
             android:layout_width="wrap_content"
@@ -135,7 +146,15 @@
             android:layout_marginLeft="280dp"
             android:background="@android:color/transparent"
             app:srcCompat="@drawable/baseline_person_24" />
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="70dp"
+            android:layout_marginLeft="285dp"
+            android:text="Profile"
+            android:textColor="#E59356"
+            android:fontFamily="@font/moresugar"
+            android:textSize="17sp" />
     </FrameLayout>
 
 
