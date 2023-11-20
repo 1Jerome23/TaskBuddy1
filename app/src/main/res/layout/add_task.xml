@@ -80,12 +80,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#D3D3D3" >
-            <Spinner
-                android:id="@+id/spinner"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/onefont"
-                android:spinnerMode="dialog" />
+                <Spinner
+                    android:id="@+id/spinner"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/onefont"
+                    android:spinnerMode="dialog" />
             </RelativeLayout>
 
             <Space
@@ -102,12 +102,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#D3D3D3" >
-            <Spinner
-                android:id="@+id/spinner2"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/onefont"
-                android:spinnerMode="dialog" />
+                <Spinner
+                    android:id="@+id/spinner2"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/onefont"
+                    android:spinnerMode="dialog" />
             </RelativeLayout>
 
             <Space
@@ -218,7 +218,17 @@
             android:layout_marginTop="35dp"
             android:layout_marginLeft="60dp"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/baseline_checklist_24" />
+            app:srcCompat="@drawable/footer_darkenedlist"  />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="93dp"
+            android:layout_marginLeft="68dp"
+            android:text="Tasks"
+            android:textColor="#E59356"
+            android:fontFamily="@font/moresugar"
+            android:textSize="17sp" />
 
         <ImageButton
             android:id="@+id/add_profile"
@@ -228,6 +238,18 @@
             android:layout_marginLeft="280dp"
             android:background="@android:color/transparent"
             app:srcCompat="@drawable/footer_person" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="93dp"
+            android:layout_marginLeft="285dp"
+            android:text="Profile"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/moresugar"
+            android:textSize="17sp" />
+
+
 
     </FrameLayout>
 
