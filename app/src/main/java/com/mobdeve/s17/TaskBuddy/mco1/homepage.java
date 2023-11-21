@@ -49,7 +49,7 @@ public class homepage extends AppCompatActivity {
     TextView sort_info_text;
 
     private int currentSortOption = R.id.sort_by_letter;  // Default sorting option
-    private int currentSortOrder = R.id.sort_asc;  // Default sorting order
+    private int currentSortOrder = R.id.sort_asc;  //Default sorting order
 
 
     @Override
