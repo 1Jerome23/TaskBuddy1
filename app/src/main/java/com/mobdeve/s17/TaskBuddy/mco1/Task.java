@@ -26,6 +26,13 @@ public class Task {
         this.taskId = taskId;
 
     }
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
     public void setUserUid(String userUid) {
         this.userUid = userUid;
     }

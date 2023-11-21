@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
@@ -69,10 +72,10 @@ public class taskDetailsActivity extends AppCompatActivity {
         Button Back_button = findViewById(R.id.Back_button);
         Button Edit_button = findViewById(R.id.Edit_button);
 
-        Back_button.setOnClickListener(new View.OnClickListener(){
+        Back_button.setOnClickListener(new View.OnClickListener() {
 
-            public void onClick(View v){
-                Intent intent = new Intent (taskDetailsActivity.this,homepage.class);
+            public void onClick(View v) {
+                Intent intent = new Intent(taskDetailsActivity.this, homepage.class);
                 startActivity(intent);
                 finish();
             }
@@ -99,7 +102,7 @@ public class taskDetailsActivity extends AppCompatActivity {
                 editIntent.putExtra("description", description);
                 editIntent.putExtra("imageUrl", imageURL);
                 editIntent.putExtra("taskId", taskId);
-                editIntent.putExtra("uid",uid);
+                editIntent.putExtra("uid", uid);
                 Log.d("task_details", "uid: " + uid);
                 Log.d("task_details", "taskName: " + taskName);
                 Log.d("task_details", "description: " + description);
@@ -111,18 +114,48 @@ public class taskDetailsActivity extends AppCompatActivity {
         });
 
 
+        Button deleteButton = findViewById(R.id.Delete_button);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String taskId = getIntent().getStringExtra("taskId");
+                Log.d("DeleteTask", "Deleting task with ID: " + taskId);
+                deleteTaskFromFirestore(taskId);
 
+                Intent intent = new Intent(taskDetailsActivity.this, homepage.class);
+                startActivity(intent);
 
-//        Button Delete_button = findViewById(R.id.Delete_button);
-//        Back_button.setOnClickListener(new View.OnClickListener(){
-//
-//        });
+                finish();
+            }
+        });
+    }
 
-//        Button Edit_button = findViewById(R.id.Edit_button){
-//            Edit_button.setOnClickListener(new View.OnClickListener(){
-//
-//
-//            });
-//        }
+    private void deleteTaskFromFirestore(String taskId) {
+        Log.d("DeleteTask", "Deleting task from Firestore");
+
+        if (taskId != null && !taskId.isEmpty()) {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            CollectionReference tasksCollection = db.collection("UserTask");
+
+            DocumentReference taskDocument = tasksCollection.document(taskId);
+
+            Log.d("DeleteTask", "Document Path: " + taskDocument.getPath());
+
+            taskDocument.get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            Log.d("FirestoreDelete", "Task still exists after deletion");
+                        } else {
+                            Log.d("FirestoreDelete", "Task successfully deleted");
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("FirestoreDelete", "Error checking document after deletion: " + e.getMessage());
+                    });
+
+        } else {
+            Log.e("FirestoreDelete", "Task ID is null or empty");
+        }
     }
 }
