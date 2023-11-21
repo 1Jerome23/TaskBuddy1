@@ -223,11 +223,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="93dp"
             android:layout_marginLeft="68dp"
+            android:layout_marginTop="80dp"
+            android:fontFamily="@font/moresugar"
             android:text="Tasks"
             android:textColor="#E59356"
-            android:fontFamily="@font/moresugar"
             android:textSize="17sp" />
 
         <ImageButton
@@ -242,7 +242,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="93dp"
+            android:layout_marginTop="82dp"
             android:layout_marginLeft="285dp"
             android:text="Profile"
             android:textColor="#FFFFFF"

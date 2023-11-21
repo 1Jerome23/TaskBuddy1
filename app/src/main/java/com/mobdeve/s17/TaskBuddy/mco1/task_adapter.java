@@ -18,6 +18,10 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
 
     Context context;
     List<task_rv> task_rvList;
+    private OnItemClickListener onItemClickListener;
+    private List<task_rv> taskList;
+
+
     public task_adapter(Context context, List<task_rv> task_rvList){
         this.context = context;
         this.task_rvList = task_rvList;
@@ -29,7 +33,13 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
 
         return new ViewHolder(view);
     }
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
+    }
+    public interface OnItemClickListener {
+        void onItemClick(String taskId, int position);
 
+    }
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         if(task_rvList != null && task_rvList.size() > 0){
@@ -38,7 +48,6 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
             holder.priority_rv.setText(model.getPriority());
             holder.status_rv.setText(model.getStatus());
             holder.date_rv.setText(model.getDate());
-
         }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,12 +61,20 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
                 intent.putExtra("task_priority", model.getPriority());
                 intent.putExtra("description", model.getDescription());
                 intent.putExtra("imageUrl", model.getImageUrl());
+                intent.putExtra("taskId", model.taskId);
+                Log.d("TaskAdapter", "Received taskId: " + model.taskId);
+
 
                 context.startActivity(intent);
-            }
-        });
 
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemClick(model.taskId, position);
+                }
+            }
+
+        });
     }
+
     public List<task_rv> getTaskList() {
         return task_rvList;
     }
