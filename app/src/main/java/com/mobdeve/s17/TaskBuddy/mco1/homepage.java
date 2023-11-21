@@ -75,7 +75,7 @@ public class homepage extends AppCompatActivity {
             finish();
         }
         Intent getData = getIntent();
-        if (intent != null) {
+        if (getData != null) {
             String taskName = getData.getStringExtra("taskName");
             String description = getData.getStringExtra("description");
             String date = getData.getStringExtra("date");
@@ -84,7 +84,6 @@ public class homepage extends AppCompatActivity {
             String imageUrl = getData.getStringExtra("imageUrl");
             String uid = getData.getStringExtra("uid");
             String taskId = getData.getStringExtra("taskId");
-
 
             Task newTask = new Task(taskName, description, date, status, priority, imageUrl, uid, taskId);
             updateRecyclerViewWithNewTask(newTask);
@@ -212,6 +211,7 @@ public class homepage extends AppCompatActivity {
                                     document.getString("date"),
                                     document.getString("description"),
                                     document.getString("imageUrl"),
+                                    document.getString("uid"),
                                     document.getString("taskId")
                             );
                             task_rvList.add(taskRv);
@@ -252,7 +252,7 @@ public class homepage extends AppCompatActivity {
     private void updateRecyclerViewWithNewTask(Task newTask) {
         List<task_rv> taskList = adapter.getTaskList();
 
-        task_rv newTask_rv = new task_rv(newTask.taskName, newTask.priority, newTask.status, newTask.date, newTask.description, newTask.imageUrl, newTask.getTaskId());
+        task_rv newTask_rv = new task_rv(newTask.taskName, newTask.priority, newTask.status, newTask.date, newTask.description, newTask.imageUrl, newTask.getTaskId(), uid);
 
         taskList.add(newTask_rv);
 

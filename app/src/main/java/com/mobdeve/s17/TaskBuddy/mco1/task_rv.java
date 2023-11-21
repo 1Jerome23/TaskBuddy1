@@ -8,24 +8,25 @@ import java.util.Map;
 
 public class task_rv {
 
-    String name;
+    String taskName;
     String priority;
     String status;
     String date;
     String description;
     String imageUrl;
     String taskId;
+    String uid;
 
 
-    public task_rv(String name, String priority, String status, String date, String description, String imageUrl, String taskId){
-        this.name = name;
+    public task_rv(String taskName, String priority, String status, String date, String description, String imageUrl, String uid, String taskId){
+        this.taskName = taskName;
         this.priority = priority;
         this.status = status;
         this.date = date;
         this.description = description;
         this.imageUrl = imageUrl;
         this.taskId = taskId;
-
+        this.uid = uid;
     }
     public String getTaskId() {
         return taskId;
@@ -33,18 +34,20 @@ public class task_rv {
 
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("name", name);
+        map.put("taskName", taskName);
         map.put("priority", priority);
         map.put("status", status);
-        map.put("dueDate", date);
-        map.put("details", description);
-        map.put("imageURL", imageUrl);
+        map.put("date", date);
+        map.put("description", description);
+        map.put("imageUrl", imageUrl);
+        map.put("taskId", taskId);
+        map.put("uid",uid);
         return map;
     }
-
+    public String getUid(){return uid;}
 
     public String getName() {
-        return name;
+        return taskName;
     }
     public void setDescription(String description) {
         this.description = description;

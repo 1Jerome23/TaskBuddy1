@@ -15,11 +15,17 @@ import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
@@ -53,10 +59,13 @@ public class edit_task extends AppCompatActivity {
         edit_file = findViewById(R.id.edit_file);
         confirm_edit = findViewById(R.id.confirm_edit);
 
+
         // Receive data from Intent
         Intent intent = getIntent();
         position = intent.getIntExtra("position", -1);
         String taskId = intent.getStringExtra("taskId");
+        String uid = intent.getStringExtra("uid");
+        Log.d("EditTask", "Received uid: " + uid);
         Log.d("EditTask", "Received taskId: " + taskId);
 
         // Retrieve data from the Intent
@@ -98,48 +107,42 @@ public class edit_task extends AppCompatActivity {
         spinner.setAdapter(priorityAdapter);
         spinner2.setAdapter(statusAdapter);
 
+
+
         confirm_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Get updated information from the UI elements
-                String updatedName = edit_name.getText().toString();
-                String updatedDue = edit_due.getText().toString();
-                String updatedDetails = edit_details.getText().toString();
-                String updatedPriority = spinner.getSelectedItem().toString();
-                String updatedStatus = spinner2.getSelectedItem().toString();
+                String taskName = edit_name.getText().toString();
+                String date = edit_due.getText().toString();
+                String description = edit_details.getText().toString();
+                String priority = spinner.getSelectedItem().toString();
+                String status = spinner2.getSelectedItem().toString();
 
-                Log.d("EditTask", "Updated Name: " + updatedName);
-                Log.d("EditTask", "Updated Due Date: " + updatedDue);
-                Log.d("EditTask", "Updated Details: " + updatedDetails);
-                Log.d("EditTask", "Updated Priority: " + updatedPriority);
-                Log.d("EditTask", "Updated Status: " + updatedStatus);
+                Log.d("EditTask", "Updated Name: " + taskName);
+                Log.d("EditTask", "Updated Due Date: " + date);
+                Log.d("EditTask", "Updated Details: " + description);
+                Log.d("EditTask", "Updated Priority: " + priority);
+                Log.d("EditTask", "Updated Status: " + status);
                 Log.d("EditTask", "Updated id: " + taskId);
+                Log.d("EditTask", "Updated uid: " + uid);
                 Log.d("EditTask", "Updated Status: " + imageURL);
 
                 task_rv updatedTask = new task_rv(
-                        updatedName,
-                        updatedPriority,
-                        updatedStatus,
-                        updatedDue,
-                        updatedDetails,
+                        taskName,
+                        priority,
+                        status,
+                        date,
+                        description,
                         imageURL,
+                        uid,
                         taskId
                 );
 
-                // Update the task in your data source (e.g., a List)
-                List<task_rv> taskList = adapter.getTaskList();
-                if (position != -1 && position < taskList.size()) {
-                    taskList.set(position, updatedTask);
-                }
+                updateTaskInFirestore(updatedTask, taskId);
+                Intent intent = new Intent(edit_task.this, homepage.class);
+                startActivity(intent);
 
-
-                // Notify the adapter of the data change
-                adapter.notifyDataSetChanged();
-
-                // Update the data in Firebase
-                updateTaskInFirebase(updatedTask, taskId);
-
-                // Finish the activity
                 finish();
             }
         });
@@ -151,33 +154,29 @@ public class edit_task extends AppCompatActivity {
             }
         });
     }
-    private void updateTaskInFirebase(task_rv updatedTask, String taskId) {
-        Log.d("EditTask", "Updating task in Firebase");
-        Log.d("EditTask", "Updated Task Map: " + updatedTask.toMap());
+    private void updateTaskInFirestore(task_rv updatedTask, String taskId) {
+        Log.d("EditTask", "Updating task in Firestore");
 
-        if (taskId != null && !taskId.isEmpty()) { // Check if taskId is not null or empty
-            // Assuming you have a reference to your Firebase database
-            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("UserTask").child(taskId);
+        if (taskId != null && !taskId.isEmpty()) {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            // Update the task in Firebase using the provided taskId
-            databaseReference.setValue(updatedTask.toMap())
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d("FirebaseUpdate", "Task updated successfully");
-                        }
+            CollectionReference tasksCollection = db.collection("UserTask");
+
+            DocumentReference taskDocument = tasksCollection.document(taskId);
+
+            taskDocument.set(updatedTask.toMap(), SetOptions.merge())
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d("FirestoreUpdate", "Task updated successfully");
                     })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e("FirebaseUpdate", "Error updating task: " + e.getMessage());
-                        }
+                    .addOnFailureListener(e -> {
+                        Log.e("FirestoreUpdate", "Error updating task: " + e.getMessage());
                     });
+
         } else {
-            // Handle the case where the task doesn't have an ID
-            Log.e("FirebaseUpdate", "Task ID is null or empty");
+            Log.e("FirestoreUpdate", "Task ID is null or empty");
         }
     }
+
     private void setSpinnerSelection(Spinner spinner, String selectedItem) {
         Log.d("Spinner", "Setting selection to: " + selectedItem);
         for (int i = 0; i < spinner.getCount(); i++) {

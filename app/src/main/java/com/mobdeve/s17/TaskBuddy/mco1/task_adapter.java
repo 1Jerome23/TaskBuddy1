@@ -40,6 +40,12 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
         void onItemClick(String taskId, int position);
 
     }
+    public void updateTask(task_rv updatedTask, int position) {
+        if (position >= 0 && position < task_rvList.size()) {
+            task_rvList.set(position, updatedTask);
+            notifyDataSetChanged();
+        }
+    }
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         if(task_rvList != null && task_rvList.size() > 0){
@@ -62,6 +68,7 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
                 intent.putExtra("description", model.getDescription());
                 intent.putExtra("imageUrl", model.getImageUrl());
                 intent.putExtra("taskId", model.taskId);
+                intent.putExtra("uid",model.uid);
                 Log.d("TaskAdapter", "Received taskId: " + model.taskId);
 
 

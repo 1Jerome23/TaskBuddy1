@@ -45,7 +45,9 @@ public class taskDetailsActivity extends AppCompatActivity {
             String description = intent.getStringExtra("description");
             String imageURL = intent.getStringExtra("imageUrl");
             String taskId = getIntent().getStringExtra("taskId");
-            Log.d("TaskActivity", "Received taskId: " + taskId);
+            String uid = getIntent().getStringExtra("uid");
+            Log.d("CHECKER", "Received uid: " + uid);
+            Log.d("CHECKER", "Received taskId: " + taskId);
 
             task_name = findViewById(R.id.task_name);
             task_date = findViewById(R.id.task_date);
@@ -86,6 +88,7 @@ public class taskDetailsActivity extends AppCompatActivity {
                 String description = task_description.getText().toString();
                 String imageURL = getIntent().getStringExtra("imageUrl");
                 String taskId = getIntent().getStringExtra("taskId");
+                String uid = getIntent().getStringExtra("uid");
 
                 Intent editIntent = new Intent(taskDetailsActivity.this, edit_task.class);
 
@@ -96,6 +99,7 @@ public class taskDetailsActivity extends AppCompatActivity {
                 editIntent.putExtra("description", description);
                 editIntent.putExtra("imageUrl", imageURL);
                 editIntent.putExtra("taskId", taskId);
+                editIntent.putExtra("uid",uid);
                 Log.d("task_details", "uid: " + uid);
                 Log.d("task_details", "taskName: " + taskName);
                 Log.d("task_details", "description: " + description);
