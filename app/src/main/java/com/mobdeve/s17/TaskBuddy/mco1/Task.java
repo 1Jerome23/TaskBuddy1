@@ -15,7 +15,7 @@ public class Task {
     public Task() {
     }
 
-    public Task(String taskName, String description, String date, String status, String priority, String imageUrl, String uid, String taskId ) {
+    public Task(String taskName, String description, String date, String priority, String status, String imageUrl, String uid, String taskId ) {
         this.taskName = taskName;
         this.description = description;
         this.date = date;
