@@ -1,11 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/sort_by_letter"
-        android:title="Sort by A-Z" />
+        android:title="Sort by Task Name" />
     <item
         android:id="@+id/sort_by_priority"
         android:title="Sort by Priority" />
     <item
         android:id="@+id/sort_by_status"
         android:title="Sort by Status" />
+    <item
+        android:id="@+id/sort_by_date"
+        android:title="Sort by Due Date" />
 </menu>

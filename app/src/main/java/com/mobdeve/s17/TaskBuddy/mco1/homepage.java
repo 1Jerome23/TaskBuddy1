@@ -46,9 +46,10 @@ public class homepage extends AppCompatActivity {
     ImageButton homepage_profile;
     private String uid = "";
 
+    TextView sort_info_text;
 
     private int currentSortOption = R.id.sort_by_letter;  // Default sorting option
-    private int currentSortOrder = R.id.sort_asc;  // Default sorting order
+    private int currentSortOrder = R.id.sort_asc;  //Default sorting order
 
 
     @Override
@@ -67,6 +68,7 @@ public class homepage extends AppCompatActivity {
         homepage_footer = (ImageView) findViewById(R.id.homepage_footer);
         homepage_homepage = (ImageButton) findViewById(R.id.homepage_homepage);
         homepage_profile = (ImageButton) findViewById(R.id.homepage_profile);
+        sort_info_text = findViewById(R.id.sort_info_text);
 
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("uid")) {
@@ -84,6 +86,7 @@ public class homepage extends AppCompatActivity {
             String imageUrl = getData.getStringExtra("imageUrl");
             String uid = getData.getStringExtra("uid");
             String taskId = getData.getStringExtra("taskId");
+
 
             Task newTask = new Task(taskName, description, date, status, priority, imageUrl, uid, taskId);
             updateRecyclerViewWithNewTask(newTask);
@@ -174,7 +177,23 @@ public class homepage extends AppCompatActivity {
 
                             subMenu.show();
                             return true;
-                        }
+                        }else if (itemId == R.id.sort_by_date) {
+                            PopupMenu subMenu = new PopupMenu(homepage.this, view);
+                            subMenu.getMenuInflater().inflate(R.menu.sub_menu_date, subMenu.getMenu());
+
+                            subMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                @Override
+                                public boolean onMenuItemClick(MenuItem subMenuItem) {
+                                    currentSortOption=R.id.sort_by_date;
+                                    currentSortOrder = subMenuItem.getItemId();
+                                    // Perform sorting
+                                    sortTasks(currentSortOption, currentSortOrder);
+                                    return true;
+                                }
+                            });
+
+                            subMenu.show();
+                            return true;}
 
                         return false;
                     }
@@ -257,22 +276,39 @@ public class homepage extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
     private void sortTasks(int sortOption, int sortOrder) {
+
         List<task_rv> taskList = adapter.getTaskList();
         Log.d("SortTasks", "Sort Option: " + sortOption + ", Sort Order: " + sortOrder);
+        sort_info_text = findViewById(R.id.sort_info_text);
+        sort_info_text.setText("Sorted by: ");
 
 
         if (sortOption == R.id.sort_by_letter) {
+            // Sort by A-Z
+            sort_info_text.append("Task Name, Order: " + (sortOrder == R.id.sort_asc ? "A-Z" : "Z-A"));
             Collections.sort(taskList, new TaskNameComparator());
         } else if (sortOption == R.id.sort_by_priority) {
+            // Sort by Priority
+            sort_info_text.append("Priority, Order: " + (sortOrder == R.id.sort_asc ? "Low to High" : "High to Low"));
+            // Sort by Priority
             Collections.sort(taskList, new PriorityComparator());
         } else if (sortOption == R.id.sort_by_status) {
+            // Sort by Status
+            sort_info_text.append("Status, Order: " + (sortOrder == R.id.sort_asc ? "Completed to Not Done" : "Not Done to Completed"));
             Collections.sort(taskList, new StatusComparator());
         }
+        else if (sortOption == R.id.sort_by_date) {
+            // Sort by Due Date
+            sort_info_text.append("Due Date, Order: " + (sortOrder == R.id.sort_asc ? "Earliest to Latest" : "Latest to Earliest"));
+            Collections.sort(taskList, new DueDateComparator());
+        }
 
+        // Check the sort order and reverse the list if descending
         if (sortOrder == R.id.sort_desc) {
             Collections.reverse(taskList);
         }
 
+        // Log the sorted task list for debugging
         for (task_rv task : taskList) {
             Log.d("SortedTask", task.getName() + " - Priority: " + task.getPriority() + ", Status: " + task.getStatus());
         }
@@ -303,12 +339,21 @@ public class homepage extends AppCompatActivity {
     private static class StatusComparator implements Comparator<task_rv> {
         @Override
         public int compare(task_rv task1, task_rv task2) {
-            List<String> statusOrder = Arrays.asList("NOT DONE", "IN PROGRESS", "COMPLETED");
+            // Define the custom status order
+            List<String> statusOrder = Arrays.asList("COMPLETED", "IN PROGRESS", "NOT DONE");
+
 
             String status1 = task1.getStatus();
             String status2 = task2.getStatus();
 
             return Integer.compare(statusOrder.indexOf(status1), statusOrder.indexOf(status2));
+        }
+    }
+
+    private static class DueDateComparator implements Comparator<task_rv> {
+        @Override
+        public int compare(task_rv task1, task_rv task2) {
+            return task1.getDate().compareTo(task2.getDate());
         }
     }
 
