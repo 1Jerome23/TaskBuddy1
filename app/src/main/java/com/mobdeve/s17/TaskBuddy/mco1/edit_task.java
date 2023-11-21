@@ -59,8 +59,6 @@ public class edit_task extends AppCompatActivity {
         edit_file = findViewById(R.id.edit_file);
         confirm_edit = findViewById(R.id.confirm_edit);
 
-
-        // Receive data from Intent
         Intent intent = getIntent();
         position = intent.getIntExtra("position", -1);
         String taskId = intent.getStringExtra("taskId");
@@ -68,7 +66,6 @@ public class edit_task extends AppCompatActivity {
         Log.d("EditTask", "Received uid: " + uid);
         Log.d("EditTask", "Received taskId: " + taskId);
 
-        // Retrieve data from the Intent
         String taskName = intent.getStringExtra("taskName");
         String taskDate = intent.getStringExtra("taskDate");
         String taskStatus = intent.getStringExtra("taskStatus");
@@ -76,18 +73,15 @@ public class edit_task extends AppCompatActivity {
         String description = intent.getStringExtra("description");
         String imageURL = intent.getStringExtra("imageUrl");
 
-        // Populate UI elements with data from the Intent
         edit_name.setText(taskName);
         edit_due.setText(taskDate);
         edit_details.setText(description);
 
-        // Set the selected item in the spinner
         setSpinnerSelection(spinner, taskStatus);
         setSpinnerSelection(spinner2, taskPriority);
         Log.d("Spinner", "Task Priority: " + taskPriority);
         Log.d("Spinner", "Task Status: " + taskStatus);
 
-        // Load image using Picasso (assuming you have a URL for the image)
         Picasso.get().load(imageURL).into(edit_file);
         String[] priorityItems = {"HIGH", "MEDIUM", "LOW"};
         String[] statusItems = {"NOT DONE", "IN PROGRESS", "COMPLETED"};
@@ -99,11 +93,9 @@ public class edit_task extends AppCompatActivity {
         add_task.CustomSpinnerAdapter statusAdapter = addTaskInstance.new CustomSpinnerAdapter(edit_task.this, R.layout.spinner_item, statusItems, colors);
 
 
-        // Set the dropdown view resource for both adapters
         priorityAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
         statusAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
 
-        // Set adapters to spinners
         spinner.setAdapter(priorityAdapter);
         spinner2.setAdapter(statusAdapter);
 
@@ -112,7 +104,6 @@ public class edit_task extends AppCompatActivity {
         confirm_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Get updated information from the UI elements
                 String taskName = edit_name.getText().toString();
                 String date = edit_due.getText().toString();
                 String description = edit_details.getText().toString();
@@ -201,16 +192,13 @@ public class edit_task extends AppCompatActivity {
             }
         };
 
-        // Use the current date as the default date in the picker
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        // Create a DatePickerDialog with the current date and the dateSetListener
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, dateSetListener, year, month, day);
 
-        // Show the DatePickerDialog
         datePickerDialog.show();
     }
 

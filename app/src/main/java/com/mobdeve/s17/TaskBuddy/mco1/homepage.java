@@ -128,11 +128,9 @@ public class homepage extends AppCompatActivity {
                             subMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                                 @Override
                                 public boolean onMenuItemClick(MenuItem subMenuItem) {
-                                    // Update current sort order
                                     currentSortOption=R.id.sort_by_letter;
                                     currentSortOrder = subMenuItem.getItemId();
 
-                                    // Perform sorting
                                     sortTasks(currentSortOption, currentSortOrder);
 
                                     return true;
@@ -264,22 +262,17 @@ public class homepage extends AppCompatActivity {
 
 
         if (sortOption == R.id.sort_by_letter) {
-            // Sort by A-Z
             Collections.sort(taskList, new TaskNameComparator());
         } else if (sortOption == R.id.sort_by_priority) {
-            // Sort by Priority
             Collections.sort(taskList, new PriorityComparator());
         } else if (sortOption == R.id.sort_by_status) {
-            // Sort by Status
             Collections.sort(taskList, new StatusComparator());
         }
 
-        // Check the sort order and reverse the list if descending
         if (sortOrder == R.id.sort_desc) {
             Collections.reverse(taskList);
         }
 
-        // Log the sorted task list for debugging
         for (task_rv task : taskList) {
             Log.d("SortedTask", task.getName() + " - Priority: " + task.getPriority() + ", Status: " + task.getStatus());
         }
@@ -298,13 +291,11 @@ public class homepage extends AppCompatActivity {
     private static class PriorityComparator implements Comparator<task_rv> {
         @Override
         public int compare(task_rv task1, task_rv task2) {
-            // Define the custom priority order
             List<String> priorityOrder = Arrays.asList("LOW", "MEDIUM", "HIGH");
 
             String priority1 = task1.getPriority();
             String priority2 = task2.getPriority();
 
-            // Compare based on custom priority order
             return Integer.compare(priorityOrder.indexOf(priority1), priorityOrder.indexOf(priority2));
         }
     }
@@ -312,13 +303,11 @@ public class homepage extends AppCompatActivity {
     private static class StatusComparator implements Comparator<task_rv> {
         @Override
         public int compare(task_rv task1, task_rv task2) {
-            // Define the custom status order
             List<String> statusOrder = Arrays.asList("NOT DONE", "IN PROGRESS", "COMPLETED");
 
             String status1 = task1.getStatus();
             String status2 = task2.getStatus();
 
-            // Compare based on custom status order
             return Integer.compare(statusOrder.indexOf(status1), statusOrder.indexOf(status2));
         }
     }
