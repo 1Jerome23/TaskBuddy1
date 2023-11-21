@@ -44,33 +44,28 @@ public class taskDetailsActivity extends AppCompatActivity {
             String taskPriority = intent.getStringExtra("task_priority");
             String description = intent.getStringExtra("description");
             String imageURL = intent.getStringExtra("imageUrl");
+            String taskId = getIntent().getStringExtra("taskId");
+            Log.d("TaskActivity", "Received taskId: " + taskId);
 
+            task_name = findViewById(R.id.task_name);
+            task_date = findViewById(R.id.task_date);
+            task_status = findViewById(R.id.task_status);
+            task_priority = findViewById(R.id.task_priority);
+            task_description = findViewById(R.id.task_description);
 
-            TextView nameTextView = findViewById(R.id.task_name);
-            TextView dateTextView = findViewById(R.id.task_date);
-            TextView statusTextView = findViewById(R.id.task_status);
-            TextView priorityTextView = findViewById(R.id.task_priority);
-            TextView descriptionTextView = findViewById(R.id.task_description);
+            task_name.setText(taskName);
+            task_date.setText(taskDate);
+            task_status.setText(taskStatus);
+            task_priority.setText(taskPriority);
+            task_description.setText(description);
+
             ImageView imageView = findViewById(R.id.add_file);
-
-
-            nameTextView.setText(taskName);
-            dateTextView.setText(taskDate);
-            statusTextView.setText(taskStatus);
-            priorityTextView.setText(taskPriority);
-            descriptionTextView.setText(description);
-
-            if (imageView != null) {
-                Log.d("TaskDetailsActivity", "ImageView Found!");
-            } else {
-                Log.d("TaskDetailsActivity", "ImageView NOT Found!");
-            }
-
             Picasso.get().load(imageURL).into(imageView);
+
         }
 
         Button Back_button = findViewById(R.id.Back_button);
-        Button edit_confirm = findViewById(R.id.Edit_button);
+        Button Edit_button = findViewById(R.id.Edit_button);
 
         Back_button.setOnClickListener(new View.OnClickListener(){
 
@@ -80,7 +75,7 @@ public class taskDetailsActivity extends AppCompatActivity {
                 finish();
             }
         });
-        edit_confirm.setOnClickListener(new View.OnClickListener() {
+        Edit_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Get the data from the TextViews and other UI elements
@@ -89,7 +84,8 @@ public class taskDetailsActivity extends AppCompatActivity {
                 String taskStatus = task_status.getText().toString();
                 String taskPriority = task_priority.getText().toString();
                 String description = task_description.getText().toString();
-                String imageURL = intent.getStringExtra("imageUrl");
+                String imageURL = getIntent().getStringExtra("imageUrl");
+                String taskId = getIntent().getStringExtra("taskId");
 
                 Intent editIntent = new Intent(taskDetailsActivity.this, edit_task.class);
 
@@ -99,10 +95,18 @@ public class taskDetailsActivity extends AppCompatActivity {
                 editIntent.putExtra("taskPriority", taskPriority);
                 editIntent.putExtra("description", description);
                 editIntent.putExtra("imageUrl", imageURL);
+                editIntent.putExtra("taskId", taskId);
+                Log.d("task_details", "uid: " + uid);
+                Log.d("task_details", "taskName: " + taskName);
+                Log.d("task_details", "description: " + description);
+                Log.d("task_details", "date: " + taskDate);
+                Log.d("task_details", "taskId: " + taskId);
 
                 startActivity(editIntent);
             }
         });
+
+
 
 
 //        Button Delete_button = findViewById(R.id.Delete_button);

@@ -8,13 +8,14 @@ public class Task {
     public String priority;
     public String imageUrl;
     public String uid ;
-    private String userUid;
+    private String taskId;
 
+    private String userUid;
 
     public Task() {
     }
 
-    public Task(String taskName, String description, String date, String status, String priority, String imageUrl, String uid ) {
+    public Task(String taskName, String description, String date, String priority, String status, String imageUrl, String uid, String taskId ) {
         this.taskName = taskName;
         this.description = description;
         this.date = date;
@@ -22,10 +23,14 @@ public class Task {
         this.priority = priority;
         this.imageUrl = imageUrl;
         this.uid = uid;
+        this.taskId = taskId;
 
     }
     public void setUserUid(String userUid) {
         this.userUid = userUid;
+    }
+    public String getTaskId() {
+        return taskId;
     }
 
 

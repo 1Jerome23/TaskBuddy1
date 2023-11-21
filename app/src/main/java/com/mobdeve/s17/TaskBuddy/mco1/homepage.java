@@ -21,11 +21,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
-
 
 public class homepage extends AppCompatActivity {
     int menuResourceId = R.menu.sort_menu;
@@ -45,6 +45,7 @@ public class homepage extends AppCompatActivity {
     ImageButton homepage_homepage;
     ImageButton homepage_profile;
     private String uid = "";
+
 
     private int currentSortOption = R.id.sort_by_letter;  // Default sorting option
     private int currentSortOrder = R.id.sort_asc;  // Default sorting order
@@ -82,12 +83,14 @@ public class homepage extends AppCompatActivity {
             String priority = getData.getStringExtra("priority");
             String imageUrl = getData.getStringExtra("imageUrl");
             String uid = getData.getStringExtra("uid");
+            String taskId = getData.getStringExtra("taskId");
 
-            Task newTask = new Task(taskName, description, date, status, priority, imageUrl, uid);
+
+            Task newTask = new Task(taskName, description, date, status, priority, imageUrl, uid, taskId);
             updateRecyclerViewWithNewTask(newTask);
 
         }
-//
+
 
         homepage_profile.setOnClickListener(new View.OnClickListener() {
 
@@ -187,7 +190,74 @@ public class homepage extends AppCompatActivity {
         updateRecyclerView(uid);
 
     }
+    private void getList(String uid) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        List<task_rv> task_rvList = new ArrayList<>();
 
+        db.collection("UserTask")
+                .whereEqualTo("uid", uid)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    Log.d("FirestoreQuery", "Querying Firestore for UID: " + uid);
+
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        Log.d("DocData", document.getId() + " => " + document.getData());
+
+                        if (document.contains("taskName") && document.contains("priority")
+                                && document.contains("status") && document.contains("date")) {
+                            task_rv taskRv = new task_rv(
+                                    document.getString("taskName"),
+                                    document.getString("priority"),
+                                    document.getString("status"),
+                                    document.getString("date"),
+                                    document.getString("description"),
+                                    document.getString("imageUrl"),
+                                    document.getString("taskId")
+                            );
+                            task_rvList.add(taskRv);
+
+                        } else {
+                            Log.e("FirestoreError", "Document is missing expected fields");
+                        }
+                    }
+
+                    if (task_rvList.isEmpty()) {
+                    } else {
+                        setRecyclerView(task_rvList);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(homepage.this, "Error querying Firestore", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+
+    private void setRecyclerView(List<task_rv> task_rvList) {
+        recycler_view.setHasFixedSize(true);
+        recycler_view.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new task_adapter(this, task_rvList);
+        recycler_view.setAdapter(adapter);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("Homepage", "onResume called");
+        updateRecyclerView(uid);
+    }
+
+
+    private void updateRecyclerView(String uid) {
+        getList(uid);
+    }
+    private void updateRecyclerViewWithNewTask(Task newTask) {
+        List<task_rv> taskList = adapter.getTaskList();
+
+        task_rv newTask_rv = new task_rv(newTask.taskName, newTask.priority, newTask.status, newTask.date, newTask.description, newTask.imageUrl, newTask.getTaskId());
+
+        taskList.add(newTask_rv);
+
+        adapter.notifyDataSetChanged();
+    }
     private void sortTasks(int sortOption, int sortOrder) {
         List<task_rv> taskList = adapter.getTaskList();
         Log.d("SortTasks", "Sort Option: " + sortOption + ", Sort Order: " + sortOrder);
@@ -253,73 +323,6 @@ public class homepage extends AppCompatActivity {
         }
     }
 
-    private void getList(String uid) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        List<task_rv> task_rvList = new ArrayList<>();
-
-        db.collection("UserTask")
-                .whereEqualTo("uid", uid)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    Log.d("FirestoreQuery", "Querying Firestore for UID: " + uid);
-
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        Log.d("DocData", document.getId() + " => " + document.getData());
-
-                        if (document.contains("taskName") && document.contains("priority")
-                                && document.contains("status") && document.contains("date")) {
-                            task_rv taskRv = new task_rv(
-                                    document.getString("taskName"),
-                                    document.getString("priority"),
-                                    document.getString("status"),
-                                    document.getString("date"),
-                                    document.getString("description"),
-                                    document.getString("imageUrl")
-                            );
-                            task_rvList.add(taskRv);
-
-                        } else {
-                            Log.e("FirestoreError", "Document is missing expected fields");
-                        }
-                    }
-
-                    if (task_rvList.isEmpty()) {
-                    } else {
-                        setRecyclerView(task_rvList);
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(homepage.this, "Error querying Firestore", Toast.LENGTH_SHORT).show();
-                });
-    }
-
-
-    private void setRecyclerView(List<task_rv> task_rvList) {
-        recycler_view.setHasFixedSize(true);
-        recycler_view.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new task_adapter(this, task_rvList);
-        recycler_view.setAdapter(adapter);
-    }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("Homepage", "onResume called");
-        updateRecyclerView(uid);
-    }
-
-
-    private void updateRecyclerView(String uid) {
-        getList(uid);
-    }
-    private void updateRecyclerViewWithNewTask(Task newTask) {
-        List<task_rv> taskList = adapter.getTaskList();
-
-        task_rv newTask_rv = new task_rv(newTask.taskName, newTask.priority, newTask.status, newTask.date, newTask.description, newTask.imageUrl);
-
-        taskList.add(newTask_rv);
-
-        adapter.notifyDataSetChanged();
-    }
 
 
 

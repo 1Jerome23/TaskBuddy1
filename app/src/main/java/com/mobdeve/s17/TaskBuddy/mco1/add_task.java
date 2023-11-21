@@ -242,8 +242,8 @@ public class add_task extends AppCompatActivity {
                     imageUrl = taskName + "_"  + ".jpg";
                     add_file.setText(imageUrl);
                 }
-
-                Task task = new Task(taskName, description, date, status, priority, imageUrl, uid);
+                String taskId = FirebaseDatabase.getInstance().getReference().child("UserTask").push().getKey();
+                Task task = new Task(taskName, description, date, status, priority, imageUrl, uid, taskId);
                 Log.d("MyApp", "Image URL set: " + imageUrl);
                 saveTaskToFirestore(uid, task);
 
@@ -255,6 +255,7 @@ public class add_task extends AppCompatActivity {
                 intent.putExtra("priority", priority);
                 intent.putExtra("imageUrl", imageUrl);
                 intent.putExtra("uid", uid);
+                intent.putExtra("taskId" ,taskId);
 
                 startActivity(intent);
                 finish();
@@ -281,7 +282,6 @@ public class add_task extends AppCompatActivity {
                     }
                 });
     }
-
 
     public class CustomSpinnerAdapter extends ArrayAdapter<String> {
 
