@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private String password;
     private FirebaseFirestore db;
 
+    private SharedPreferences sharedPreferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,11 @@ public class MainActivity extends AppCompatActivity {
         RegisterPassword = (EditText) findViewById(R.id.RegisterPassword);
         RegisterSubmit = (Button) findViewById(R.id.RegisterSubmit);
         RegisterMessage = (TextView) findViewById(R.id.RegisterMessage);
+
+        //sharedPreferences
+        sharedPreferences = getSharedPreferences("prefKey", MODE_PRIVATE);
+        //function is called to skip the login page if a shared preference is present
+        skipLogin();
 
         db = FirebaseFirestore.getInstance();
 
@@ -173,11 +181,24 @@ public class MainActivity extends AppCompatActivity {
                         Log.e("FirestoreError", "Error adding user data: " + e.getMessage());
                     }
                 });
+
     }
     private boolean isValidEmail(String email) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
+
+    private void skipLogin() {
+        String saved = sharedPreferences.getString("uid", null);
+        //skip to homepage if user is alr logged in
+        if (saved != null) {
+            Intent intent = new Intent(MainActivity.this, homepage.class);
+            intent.putExtra("uid", saved);
+            startActivity(intent);
+        }
+    }
 }
+
+
 
 
 
