@@ -39,6 +39,12 @@ public class Task {
     public String getTaskId() {
         return taskId;
     }
+    public String getTaskName(){return taskName;}
+    public String getDescription(){return description;}
+    public String getDate(){ return date;}
+    public String getUid(){ return uid;}
+    public String getStatus(){return status;}
+    public String getPriority(){return priority;}
 
 
 }

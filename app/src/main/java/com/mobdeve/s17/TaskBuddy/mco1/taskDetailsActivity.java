@@ -1,5 +1,7 @@
 package com.mobdeve.s17.TaskBuddy.mco1;
 
+import static com.google.firebase.firestore.DocumentSnapshot.ServerTimestampBehavior.ESTIMATE;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,10 +14,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import okio.Source;
 
 public class taskDetailsActivity extends AppCompatActivity {
 
@@ -119,15 +128,21 @@ public class taskDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String taskId = getIntent().getStringExtra("taskId");
-                Log.d("DeleteTask", "Deleting task with ID: " + taskId);
-                deleteTaskFromFirestore(taskId);
+
+                if (taskId != null) {
+                    Log.d("DeleteTask", "Deleting task with ID: " + taskId);
+                    deleteTaskFromFirestore(taskId);
+                } else {
+                    Log.e("DeleteTask", "Task ID is null");
+                }
 
                 Intent intent = new Intent(taskDetailsActivity.this, homepage.class);
                 startActivity(intent);
-
                 finish();
             }
         });
+
+
     }
 
     private void deleteTaskFromFirestore(String taskId) {
@@ -136,26 +151,27 @@ public class taskDetailsActivity extends AppCompatActivity {
         if (taskId != null && !taskId.isEmpty()) {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+            // Assuming "UserTask" is a top-level collection
             CollectionReference tasksCollection = db.collection("UserTask");
-
             DocumentReference taskDocument = tasksCollection.document(taskId);
 
             Log.d("DeleteTask", "Document Path: " + taskDocument.getPath());
+            Log.d("FirestoreDelete", "Deleting task with ID: " + taskId);
 
-            taskDocument.get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        if (documentSnapshot.exists()) {
-                            Log.d("FirestoreDelete", "Task still exists after deletion");
-                        } else {
-                            Log.d("FirestoreDelete", "Task successfully deleted");
-                        }
+            taskDocument.delete()
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d("FirestoreDelete", "Task successfully deleted");
                     })
                     .addOnFailureListener(e -> {
-                        Log.e("FirestoreDelete", "Error checking document after deletion: " + e.getMessage());
+                        Log.e("FirestoreDelete", "Error deleting document: " + e.getMessage(), e);
                     });
-
         } else {
             Log.e("FirestoreDelete", "Task ID is null or empty");
         }
     }
+
+
+
+
+
 }
