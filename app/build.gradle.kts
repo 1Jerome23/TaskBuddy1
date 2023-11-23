@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.mobdeve.s17.TaskBuddy.mco1"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.mobdeve.s17.TaskBuddy.mco1"

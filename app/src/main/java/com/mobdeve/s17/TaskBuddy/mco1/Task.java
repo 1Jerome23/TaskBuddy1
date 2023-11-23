@@ -26,12 +26,25 @@ public class Task {
         this.taskId = taskId;
 
     }
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
     public void setUserUid(String userUid) {
         this.userUid = userUid;
     }
     public String getTaskId() {
         return taskId;
     }
+    public String getTaskName(){return taskName;}
+    public String getDescription(){return description;}
+    public String getDate(){ return date;}
+    public String getUid(){ return uid;}
+    public String getStatus(){return status;}
+    public String getPriority(){return priority;}
 
 
 }

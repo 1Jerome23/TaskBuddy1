@@ -1,5 +1,7 @@
 package com.mobdeve.s17.TaskBuddy.mco1;
 
+import static com.google.firebase.firestore.DocumentSnapshot.ServerTimestampBehavior.ESTIMATE;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,9 +12,19 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import okio.Source;
 
 public class taskDetailsActivity extends AppCompatActivity {
 
@@ -69,10 +81,10 @@ public class taskDetailsActivity extends AppCompatActivity {
         Button Back_button = findViewById(R.id.Back_button);
         Button Edit_button = findViewById(R.id.Edit_button);
 
-        Back_button.setOnClickListener(new View.OnClickListener(){
+        Back_button.setOnClickListener(new View.OnClickListener() {
 
-            public void onClick(View v){
-                Intent intent = new Intent (taskDetailsActivity.this,homepage.class);
+            public void onClick(View v) {
+                Intent intent = new Intent(taskDetailsActivity.this, homepage.class);
                 startActivity(intent);
                 finish();
             }
@@ -99,7 +111,7 @@ public class taskDetailsActivity extends AppCompatActivity {
                 editIntent.putExtra("description", description);
                 editIntent.putExtra("imageUrl", imageURL);
                 editIntent.putExtra("taskId", taskId);
-                editIntent.putExtra("uid",uid);
+                editIntent.putExtra("uid", uid);
                 Log.d("task_details", "uid: " + uid);
                 Log.d("task_details", "taskName: " + taskName);
                 Log.d("task_details", "description: " + description);
@@ -111,18 +123,55 @@ public class taskDetailsActivity extends AppCompatActivity {
         });
 
 
+        Button deleteButton = findViewById(R.id.Delete_button);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String taskId = getIntent().getStringExtra("taskId");
+
+                if (taskId != null) {
+                    Log.d("DeleteTask", "Deleting task with ID: " + taskId);
+                    deleteTaskFromFirestore(taskId);
+                } else {
+                    Log.e("DeleteTask", "Task ID is null");
+                }
+
+                Intent intent = new Intent(taskDetailsActivity.this, homepage.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
 
-//        Button Delete_button = findViewById(R.id.Delete_button);
-//        Back_button.setOnClickListener(new View.OnClickListener(){
-//
-//        });
-
-//        Button Edit_button = findViewById(R.id.Edit_button){
-//            Edit_button.setOnClickListener(new View.OnClickListener(){
-//
-//
-//            });
-//        }
     }
+
+    private void deleteTaskFromFirestore(String taskId) {
+        Log.d("DeleteTask", "Deleting task from Firestore");
+
+        if (taskId != null && !taskId.isEmpty()) {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            // Assuming "UserTask" is a top-level collection
+            CollectionReference tasksCollection = db.collection("UserTask");
+            DocumentReference taskDocument = tasksCollection.document(taskId);
+
+            Log.d("DeleteTask", "Document Path: " + taskDocument.getPath());
+            Log.d("FirestoreDelete", "Deleting task with ID: " + taskId);
+
+            taskDocument.delete()
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d("FirestoreDelete", "Task successfully deleted");
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("FirestoreDelete", "Error deleting document: " + e.getMessage(), e);
+                    });
+        } else {
+            Log.e("FirestoreDelete", "Task ID is null or empty");
+        }
+    }
+
+
+
+
+
 }
