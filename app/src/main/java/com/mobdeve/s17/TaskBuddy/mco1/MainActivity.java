@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
+
 public class MainActivity extends AppCompatActivity {
 
     ImageView RegisterLogo;
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String fullName = RegisterFullName.getText().toString().trim();
                 String email = RegisterEmail.getText().toString().trim();
-                String password = RegisterPassword.getText().toString();
+                String plainTextpassword = RegisterPassword.getText().toString(); //plaintext
 
                 if (TextUtils.isEmpty(fullName)) {
                     RegisterFullName.setError("Please enter Full Name");
@@ -78,12 +80,16 @@ public class MainActivity extends AppCompatActivity {
                     RegisterEmail.setError("Please enter a valid Email Address");
                     Toast.makeText(getApplicationContext(), "Please enter a valid email address", Toast.LENGTH_SHORT).show();
 
-                } else if (TextUtils.isEmpty(password)) {
+                } else if (TextUtils.isEmpty(plainTextpassword)) {
                     RegisterPassword.setError("Please enter Password");
                 } else {
                     String uid = generateUniqueUid(email);
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                     CollectionReference usersRef = db.collection("UserData");
+
+                    //hash plainTextpassword and store it into password variable
+                    String password = BCrypt.withDefaults().hashToString(12, plainTextpassword.toCharArray());
+
 
                     usersRef.whereEqualTo("email", email)
                             .get()
