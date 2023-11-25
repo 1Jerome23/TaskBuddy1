@@ -95,20 +95,14 @@ public class add_task extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_task);
 
-        ImageView add_icon = findViewById(R.id.add_icon);
-        TextView add_create = findViewById(R.id.add_create);
-        TextView add_title = findViewById(R.id.add_title);
         EditText add_name = findViewById(R.id.add_name);
         Spinner spinner = findViewById(R.id.spinner);
         Spinner spinner2 = findViewById(R.id.spinner2);
         TextView add_due_date = findViewById(R.id.add_due_date);
         add_due = findViewById(R.id.add_due);
-        TextView add_text_detail = findViewById(R.id.add_text_detail);
         EditText add_details = findViewById(R.id.add_details);
-        TextView add_attachments = findViewById(R.id.add_attachments);
         Button attachFileButton = findViewById(R.id.attachFileButton);
         Button add_confirm = findViewById(R.id.add_confirm);
-        ImageView add_footer = findViewById(R.id.add_footer);
         ImageButton add_homepage = findViewById(R.id.add_homepage);
         ImageButton add_profile = findViewById(R.id.add_profile);
         TextView add_file = findViewById(R.id.add_file);
@@ -244,25 +238,19 @@ public class add_task extends AppCompatActivity {
                         spinnerSpinner.getSelectedItem().toString() : "";
 
                 if (selectedFileUri != null) {
-                    // If an image is selected, proceed with the upload
                     StorageReference imageRef = storageRef.child("UserTask/" + getSelectedFileName(selectedFileUri));
 
                     imageRef.putFile(selectedFileUri)
                             .addOnSuccessListener(taskSnapshot -> {
-                                // Image upload success, now get the download URL
                                 imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                                     String imageURL = uri.toString();
 
-                                    // Generate a unique task ID
                                     String taskId = myRef.push().getKey();
 
-                                    // Create a Task object with the download URL
                                     Task task = new Task(taskName, description, date, status, priority, imageURL, uid, taskId);
 
-                                    // Save the Task object to Firestore
                                     saveTaskToFirestore(uid, task);
 
-                                    // Create an Intent to navigate to the homepage
                                     Intent intent = new Intent(add_task.this, homepage.class);
                                     intent.putExtra("taskName", taskName);
                                     intent.putExtra("description", description);
@@ -279,32 +267,25 @@ public class add_task extends AppCompatActivity {
                                 });
                             })
                             .addOnFailureListener(e -> {
-                                // Handle unsuccessful uploads
                                 Toast.makeText(getApplicationContext(), "Image upload failed", Toast.LENGTH_SHORT).show();
                             });
                 } else {
-                    // If no image is selected, proceed without uploading an image
-                    // Generate a unique task ID
                     String taskId = myRef.push().getKey();
 
-                    // Create a Task object without an image URL
                     Task task = new Task(taskName, description, date, status, priority, "", uid, taskId);
 
-                    // Save the Task object to Firestore
                     saveTaskToFirestore(uid, task);
 
-                    // Create an Intent to navigate to the homepage
                     Intent intent = new Intent(add_task.this, homepage.class);
                     intent.putExtra("taskName", taskName);
                     intent.putExtra("description", description);
                     intent.putExtra("date", date);
                     intent.putExtra("status", status);
                     intent.putExtra("priority", priority);
-                    intent.putExtra("imageUrl", ""); // Set empty string for imageUrl
+                    intent.putExtra("imageUrl", "");
                     intent.putExtra("uid", uid);
                     intent.putExtra("taskId", taskId);
 
-                    // Start the homepage activity
                     startActivity(intent);
                     finish();
                 }
@@ -331,10 +312,14 @@ public class add_task extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        TextView add_file = findViewById(R.id.add_file);
 
         if (requestCode == PICK_FILE_REQUEST && resultCode == RESULT_OK && data != null) {
-            // Assign the value to selectedFileUri
             selectedFileUri = data.getData();
+            String fileName = getSelectedFileName(selectedFileUri);
+            add_file.setTextColor(Color.BLACK);
+            add_file.setEnabled(true);
+            add_file.setText(fileName);
         }
     }
 
