@@ -54,6 +54,7 @@ import com.squareup.picasso.Picasso;
 
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 
@@ -113,8 +114,6 @@ public class add_task extends AppCompatActivity {
         } else {
             finish();
         }
-
-
 
         add_homepage.setOnClickListener(new View.OnClickListener(){
 

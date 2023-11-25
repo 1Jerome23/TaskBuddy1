@@ -1,5 +1,7 @@
 package com.mobdeve.s17.TaskBuddy.mco1;
 
+import static com.google.firebase.firestore.DocumentSnapshot.ServerTimestampBehavior.ESTIMATE;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,15 +12,27 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import okio.Source;
 
 public class taskDetailsActivity extends AppCompatActivity {
 
     TextView task_name;
     TextView task_description;
-    TextView  task_due;
+    TextView task_due;
     TextView task_date;
     TextView task_textStatus;
     TextView task_status;
@@ -69,10 +83,10 @@ public class taskDetailsActivity extends AppCompatActivity {
         Button Back_button = findViewById(R.id.Back_button);
         Button Edit_button = findViewById(R.id.Edit_button);
 
-        Back_button.setOnClickListener(new View.OnClickListener(){
+        Back_button.setOnClickListener(new View.OnClickListener() {
 
-            public void onClick(View v){
-                Intent intent = new Intent (taskDetailsActivity.this,homepage.class);
+            public void onClick(View v) {
+                Intent intent = new Intent(taskDetailsActivity.this, homepage.class);
                 startActivity(intent);
                 finish();
             }
@@ -99,7 +113,7 @@ public class taskDetailsActivity extends AppCompatActivity {
                 editIntent.putExtra("description", description);
                 editIntent.putExtra("imageUrl", imageURL);
                 editIntent.putExtra("taskId", taskId);
-                editIntent.putExtra("uid",uid);
+                editIntent.putExtra("uid", uid);
                 Log.d("task_details", "uid: " + uid);
                 Log.d("task_details", "taskName: " + taskName);
                 Log.d("task_details", "description: " + description);
@@ -111,18 +125,57 @@ public class taskDetailsActivity extends AppCompatActivity {
         });
 
 
+        Button deleteButton = findViewById(R.id.Delete_button);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String uid = getIntent().getStringExtra("uid");
+                String taskId = getIntent().getStringExtra("taskId");
+
+                if (uid != null && taskId != null) {
+                    Log.d("DeleteTask", "Deleting task with ID: " + taskId + " for UID: " + uid);
+                    deleteTask(uid, taskId);
+                } else {
+                    Log.e("DeleteTask", "UID or Task ID is null");
+                }
+
+                Intent intent = new Intent(taskDetailsActivity.this, homepage.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
 
-//        Button Delete_button = findViewById(R.id.Delete_button);
-//        Back_button.setOnClickListener(new View.OnClickListener(){
-//
-//        });
+    }
 
-//        Button Edit_button = findViewById(R.id.Edit_button){
-//            Edit_button.setOnClickListener(new View.OnClickListener(){
-//
-//
-//            });
-//        }
+    private void deleteTask(String uid, String taskId) {
+        Log.d("DeleteTask", "Deleting task with ID: " + taskId + " for UID: " + uid);
+
+        if (uid != null && !uid.isEmpty() && taskId != null && !taskId.isEmpty()) {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            CollectionReference tasksCollection = db.collection("UserTask");
+
+            // Build a query to find the specific task
+            Query query = tasksCollection.whereEqualTo("uid", uid).whereEqualTo("taskId", taskId);
+
+            query.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        // Delete the task
+                        document.getReference().delete()
+                                .addOnSuccessListener(aVoid -> {
+                                    Log.d("FirestoreDelete", "Task successfully deleted");
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("FirestoreDelete", "Error deleting document: " + e.getMessage(), e);
+                                });
+                    }
+                } else {
+                    Log.e("FirestoreDelete", "Error getting documents: " + task.getException());
+                }
+            });
+        } else {
+            Log.e("FirestoreDelete", "UID or Task ID is null or empty");
+        }
     }
 }

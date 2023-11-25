@@ -2,6 +2,8 @@ package com.mobdeve.s17.TaskBuddy.mco1;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,12 +15,20 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,6 +57,7 @@ public class homepage extends AppCompatActivity {
     private String uid = "";
 
     TextView sort_info_text;
+    List<task_rv> task_rvList = new ArrayList<>();
 
     private int currentSortOption = R.id.sort_by_letter;  // Default sorting option
     private int currentSortOrder = R.id.sort_asc;  //Default sorting order
@@ -92,7 +103,8 @@ public class homepage extends AppCompatActivity {
             updateRecyclerViewWithNewTask(newTask);
 
         }
-
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(recycler_view);
 
         homepage_profile.setOnClickListener(new View.OnClickListener() {
 
@@ -206,7 +218,72 @@ public class homepage extends AppCompatActivity {
         updateRecyclerView(uid);
 
     }
-    private void getList(String uid) {
+    task_rv deletedTask = null;
+    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            Log.d("Swiped", "onSwiped method called");
+
+            try {
+                int position = viewHolder.getAbsoluteAdapterPosition();
+                switch(direction){
+                    case ItemTouchHelper.LEFT:
+                        if (position >= 0 && position < task_rvList.size()) {
+                            deletedTask = task_rvList.get(position);
+                            Log.d("TaskID", "Task ID to delete: " + deletedTask.getTaskId());
+
+                            task_rvList.remove(position);
+                            adapter.notifyItemRemoved(position);
+                            adapter.deleteItem(position);
+
+                            deleteTaskFromFirestore(deletedTask.getTaskId());
+
+                            String deletedTaskName = deletedTask.getName();
+                            Snackbar.make(recycler_view, "Deleted task: " + deletedTaskName, Snackbar.LENGTH_LONG)
+                                    .setAction("Undo", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            task_rvList.add(position, deletedTask);
+                                            adapter.notifyItemInserted(position);
+                                        }
+                                    }).show();
+                        }
+                        break;
+                }
+            } catch (Exception e) {
+                Log.e("Swiped", "Error in onSwiped", e);
+            }
+
+
+        }
+    };
+
+    private void deleteTaskFromFirestore(String taskId) {
+        Log.d("FirestoreDelete", "Deleting task with ID: " + taskId);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference tasksCollection = db.collection("UserTask");
+        tasksCollection.document(taskId)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("FirestoreDelete", "Task deleted successfully from Firestore");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("FirestoreDelete", "Error deleting task from Firestore", e);
+                    }
+                });
+    }
+
+        private void getList(String uid) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         List<task_rv> task_rvList = new ArrayList<>();
 
@@ -339,7 +416,6 @@ public class homepage extends AppCompatActivity {
     private static class StatusComparator implements Comparator<task_rv> {
         @Override
         public int compare(task_rv task1, task_rv task2) {
-            // Define the custom status order
             List<String> statusOrder = Arrays.asList("COMPLETED", "IN PROGRESS", "NOT DONE");
 
 
@@ -356,6 +432,8 @@ public class homepage extends AppCompatActivity {
             return task1.getDate().compareTo(task2.getDate());
         }
     }
+
+
 
 
 

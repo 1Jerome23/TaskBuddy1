@@ -99,8 +99,6 @@ public class edit_task extends AppCompatActivity {
         spinner.setAdapter(priorityAdapter);
         spinner2.setAdapter(statusAdapter);
 
-
-
         confirm_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -110,7 +110,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="459dp"
+        android:layout_height="428dp"
         android:ellipsize="marquee"
         android:scrollbars="horizontal"
         android:scrollHorizontally="true"
@@ -123,7 +123,7 @@
         <ImageView
             android:id="@+id/homepage_footer"
             android:layout_width="wrap_content"
-            android:layout_height="120dp"
+            android:layout_height="114dp"
             app:srcCompat="@drawable/footer" />
 
         <ImageButton

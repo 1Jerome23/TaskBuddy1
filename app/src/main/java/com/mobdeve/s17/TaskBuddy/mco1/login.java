@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import at.favre.lib.crypto.bcrypt.BCrypt;
 
 public class login extends AppCompatActivity {
     ImageView LoginLogo;
@@ -67,20 +68,34 @@ public class login extends AppCompatActivity {
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                     CollectionReference usersRef = db.collection("UserData");
 
-                    usersRef.whereEqualTo("email", email).whereEqualTo("password", password)
+
+
+                    usersRef.whereEqualTo("email", email)
                             .get()
                             .addOnSuccessListener(queryDocumentSnapshots -> {
                                 if (!queryDocumentSnapshots.isEmpty()) {
                                     String uid = queryDocumentSnapshots.getDocuments().get(0).getId();
+                                    String hashPassword = queryDocumentSnapshots.getDocuments().get(0).getString("password");
+                                    Log.d("LoginDebug", "Email: " + email + " Password: " + password);
+                                    Log.d("LoginDebug", " Password from DB: " + hashPassword);
 
-                                    //save uid to sharedpref
-                                    saveShared(uid);
+                                    boolean passMatch = BCrypt.verifyer().verify(password.toCharArray(),hashPassword).verified;
+                                    Log.d("LoginDebug", "Password Match: " + passMatch);
 
-                                    Intent intent = new Intent(login.this, homepage.class);
-                                    intent.putExtra("uid", uid);
-                                    startActivity(intent);
+                                    if (passMatch){
+                                        //save uid to sharedpref
+                                        saveShared(uid);
 
-                                    Toast.makeText(getApplicationContext(), "Log In Successfully", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(login.this, homepage.class);
+                                        intent.putExtra("uid", uid);
+                                        startActivity(intent);
+
+                                        Toast.makeText(getApplicationContext(), "Log In Successfully", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else{
+                                        Toast.makeText(getApplicationContext(), "Log In Failed", Toast.LENGTH_SHORT).show();
+                                    }
+
                                 } else {
                                     Toast.makeText(getApplicationContext(), "Log In Failed", Toast.LENGTH_SHORT).show();
                                 }
