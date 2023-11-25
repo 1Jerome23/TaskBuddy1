@@ -155,13 +155,11 @@ public class taskDetailsActivity extends AppCompatActivity {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             CollectionReference tasksCollection = db.collection("UserTask");
 
-            // Build a query to find the specific task
             Query query = tasksCollection.whereEqualTo("uid", uid).whereEqualTo("taskId", taskId);
 
             query.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        // Delete the task
                         document.getReference().delete()
                                 .addOnSuccessListener(aVoid -> {
                                     Log.d("FirestoreDelete", "Task successfully deleted");

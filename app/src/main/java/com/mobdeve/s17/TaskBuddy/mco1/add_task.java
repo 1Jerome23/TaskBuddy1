@@ -84,6 +84,9 @@ public class add_task extends AppCompatActivity {
     TextView add_status_task;
     TextView add_file;
     public String uid = "";
+    private Uri selectedFileUri;
+    private static final int PICK_FILE_REQUEST = 2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,6 +219,8 @@ public class add_task extends AppCompatActivity {
 
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference myRef = db.getReference("UserTask");
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReferenceFromUrl("gs://mco3-94435.appspot.com");
         add_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -237,31 +242,62 @@ public class add_task extends AppCompatActivity {
                 final String priority = (spinnerSpinner != null && spinnerSpinner.getSelectedItem() != null) ?
                         spinnerSpinner.getSelectedItem().toString() : "";
 
-                if (TextUtils.isEmpty(imageUrl.trim())) {
-                    imageUrl = taskName + "_"  + ".jpg";
-                    add_file.setText(imageUrl);
-                }
-                String taskId = FirebaseDatabase.getInstance().getReference().child("UserTask").push().getKey();
-                Task task = new Task(taskName, description, date, status, priority, imageUrl, uid, taskId);
-                Log.d("MyApp", "Image URL set: " + imageUrl);
-                saveTaskToFirestore(uid, task);
+                StorageReference imageRef = storageRef.child("UserTask/" + imageUrl);
 
-                Intent intent = new Intent(add_task.this, homepage.class);
-                intent.putExtra("taskName", taskName);
-                intent.putExtra("description", description);
-                intent.putExtra("date", date);
-                intent.putExtra("status", status);
-                intent.putExtra("priority", priority);
-                intent.putExtra("imageUrl", imageUrl);
-                intent.putExtra("uid", uid);
-                intent.putExtra("taskId" ,taskId);
+                // Replace the following line with the path to your image file
+                // Assuming you have the image file stored locally, you can use its path
+                Uri file = selectedFileUri;
 
-                startActivity(intent);
-                finish();
+                // Upload the image file to Firebase Storage
+                imageRef.putFile(file)
+                        .addOnSuccessListener(taskSnapshot -> {
+                            // Image upload success, now get the download URL
+                            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                String imageURL = uri.toString();
+
+                                // Generate a unique task ID
+                                String taskId = myRef.push().getKey();
+
+                                // Create a Task object with the download URL
+                                Task task = new Task(taskName, description, date, status, priority, imageURL, uid, taskId);
+
+                                // Save the Task object to Firestore
+                                saveTaskToFirestore(uid, task);
+
+                                // Create an Intent to navigate to the homepage
+                                Intent intent = new Intent(add_task.this, homepage.class);
+                                intent.putExtra("taskName", taskName);
+                                intent.putExtra("description", description);
+                                intent.putExtra("date", date);
+                                intent.putExtra("status", status);
+                                intent.putExtra("priority", priority);
+                                intent.putExtra("imageUrl", imageURL);
+                                intent.putExtra("uid", uid);
+                                intent.putExtra("taskId", taskId);
+
+                                // Start the homepage activity
+                                startActivity(intent);
+                                finish();
+                            });
+                        })
+                        .addOnFailureListener(e -> {
+                            // Handle unsuccessful uploads
+                            Toast.makeText(getApplicationContext(), "Image upload failed", Toast.LENGTH_SHORT).show();
+                        });
             }
-
         });
+
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_FILE_REQUEST && resultCode == RESULT_OK && data != null) {
+            // Assign the value to selectedFileUri
+            selectedFileUri = data.getData();
+        }
+    }
+
     private void saveTaskToFirestore(String uid, Task task) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference tasksRef = db.collection("UserTask");
