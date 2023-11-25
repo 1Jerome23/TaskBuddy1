@@ -267,7 +267,7 @@ public class homepage extends AppCompatActivity {
                             document.getReference().delete()
                                     .addOnSuccessListener(aVoid -> {
                                         Log.d("FirestoreDelete", "Task successfully deleted");
-                                        removeFromListAndNotify(position);                              })
+                                        removeFromListAndNotify(position);                     })
                                     .addOnFailureListener(e -> {
                                         Log.e("FirestoreDelete", "Error deleting document: " + e.getMessage(), e);
                                     });
