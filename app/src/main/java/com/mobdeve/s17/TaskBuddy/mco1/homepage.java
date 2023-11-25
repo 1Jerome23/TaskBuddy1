@@ -224,7 +224,6 @@ public class homepage extends AppCompatActivity {
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
             return false;
         }
-
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             Log.d("Swiped", "onSwiped method called");
@@ -248,7 +247,6 @@ public class homepage extends AppCompatActivity {
                                     .setAction("Undo", new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            // Add the deleted task back to the list
                                             task_rvList.add(position, deletedTask);
                                             adapter.notifyItemInserted(position);
                                         }
