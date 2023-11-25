@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import at.favre.lib.crypto.bcrypt.BCrypt;
 
 public class password_change extends AppCompatActivity {
 
@@ -95,6 +96,9 @@ public class password_change extends AppCompatActivity {
                         return;
                     }
 
+                    Log.d("ChangepassDebug", " Old Pass: " + currentPassword);
+                    Log.d("ChangepassDebug", " New Pass: " + newPassword);
+
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                     DocumentReference userRef = db.collection("UserData").document(uid);
                     userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -102,27 +106,35 @@ public class password_change extends AppCompatActivity {
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             if (documentSnapshot.exists()) {
                                 String storedPassword = documentSnapshot.getString("password");
+                                Log.d("ChangepassDebug", " Stored Pass: " + storedPassword);
+                                //verify the old password
+                                boolean passMatch = BCrypt.verifyer().verify(currentPassword.toCharArray(),storedPassword).verified;
+                                Log.d("ChangepassDebug", " Pass Match: " + passMatch);
 
-                                if (currentPassword.equals(storedPassword)) {
-                                    userRef.update("password", newPassword)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    Toast.makeText(getApplicationContext(), "You have successfully updated the password", Toast.LENGTH_SHORT).show();
-                                                    Intent intent = new Intent(password_change.this, homepage.class);
-                                                    intent.putExtra("uid", uid);
-                                                    startActivity(intent);
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Toast.makeText(getApplicationContext(), "Failed to update password", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                } else {
+                                if(passMatch){
+                                    //hash the new password
+                                    String newHashedpass = BCrypt.withDefaults().hashToString(12, newPassword.toCharArray());
+                                        userRef.update("password", newHashedpass)
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Toast.makeText(getApplicationContext(), "You have successfully updated the password", Toast.LENGTH_SHORT).show();
+                                                        Intent intent = new Intent(password_change.this, homepage.class);
+                                                        intent.putExtra("uid", uid);
+                                                        startActivity(intent);
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(getApplicationContext(), "Failed to update password", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+
+                                }else {
                                     Toast.makeText(getApplicationContext(), "Current password is incorrect", Toast.LENGTH_SHORT).show();
                                 }
+
                             }
                         }
                     }).addOnFailureListener(new OnFailureListener() {
