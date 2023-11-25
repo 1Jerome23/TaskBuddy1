@@ -5,12 +5,14 @@ import static android.content.ContentValues.TAG;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -227,13 +229,12 @@ public class add_task extends AppCompatActivity {
                 String taskName = add_name.getText().toString();
                 String date = add_due.getText().toString();
                 String description = add_details.getText().toString();
-                String imageUrl = add_file.getText().toString();
 
                 if (taskName.isEmpty() || date.isEmpty()) {
-                    Toast Toast = null;
-                    Toast.makeText(getApplicationContext(), "TaskName, and Date are required", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "TaskName and Date are required", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
                 final Spinner addStatusTaskSpinner = findViewById(R.id.spinner);
                 final String status = (addStatusTaskSpinner != null && addStatusTaskSpinner.getSelectedItem() != null) ?
                         addStatusTaskSpinner.getSelectedItem().toString() : "";
@@ -242,51 +243,90 @@ public class add_task extends AppCompatActivity {
                 final String priority = (spinnerSpinner != null && spinnerSpinner.getSelectedItem() != null) ?
                         spinnerSpinner.getSelectedItem().toString() : "";
 
-                StorageReference imageRef = storageRef.child("UserTask/" + imageUrl);
+                if (selectedFileUri != null) {
+                    // If an image is selected, proceed with the upload
+                    StorageReference imageRef = storageRef.child("UserTask/" + getSelectedFileName(selectedFileUri));
 
-                // Replace the following line with the path to your image file
-                // Assuming you have the image file stored locally, you can use its path
-                Uri file = selectedFileUri;
+                    imageRef.putFile(selectedFileUri)
+                            .addOnSuccessListener(taskSnapshot -> {
+                                // Image upload success, now get the download URL
+                                imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                    String imageURL = uri.toString();
 
-                // Upload the image file to Firebase Storage
-                imageRef.putFile(file)
-                        .addOnSuccessListener(taskSnapshot -> {
-                            // Image upload success, now get the download URL
-                            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                                String imageURL = uri.toString();
+                                    // Generate a unique task ID
+                                    String taskId = myRef.push().getKey();
 
-                                // Generate a unique task ID
-                                String taskId = myRef.push().getKey();
+                                    // Create a Task object with the download URL
+                                    Task task = new Task(taskName, description, date, status, priority, imageURL, uid, taskId);
 
-                                // Create a Task object with the download URL
-                                Task task = new Task(taskName, description, date, status, priority, imageURL, uid, taskId);
+                                    // Save the Task object to Firestore
+                                    saveTaskToFirestore(uid, task);
 
-                                // Save the Task object to Firestore
-                                saveTaskToFirestore(uid, task);
+                                    // Create an Intent to navigate to the homepage
+                                    Intent intent = new Intent(add_task.this, homepage.class);
+                                    intent.putExtra("taskName", taskName);
+                                    intent.putExtra("description", description);
+                                    intent.putExtra("date", date);
+                                    intent.putExtra("status", status);
+                                    intent.putExtra("priority", priority);
+                                    intent.putExtra("imageUrl", imageURL);
+                                    intent.putExtra("uid", uid);
+                                    intent.putExtra("taskId", taskId);
 
-                                // Create an Intent to navigate to the homepage
-                                Intent intent = new Intent(add_task.this, homepage.class);
-                                intent.putExtra("taskName", taskName);
-                                intent.putExtra("description", description);
-                                intent.putExtra("date", date);
-                                intent.putExtra("status", status);
-                                intent.putExtra("priority", priority);
-                                intent.putExtra("imageUrl", imageURL);
-                                intent.putExtra("uid", uid);
-                                intent.putExtra("taskId", taskId);
-
-                                // Start the homepage activity
-                                startActivity(intent);
-                                finish();
+                                    // Start the homepage activity
+                                    startActivity(intent);
+                                    finish();
+                                });
+                            })
+                            .addOnFailureListener(e -> {
+                                // Handle unsuccessful uploads
+                                Toast.makeText(getApplicationContext(), "Image upload failed", Toast.LENGTH_SHORT).show();
                             });
-                        })
-                        .addOnFailureListener(e -> {
-                            // Handle unsuccessful uploads
-                            Toast.makeText(getApplicationContext(), "Image upload failed", Toast.LENGTH_SHORT).show();
-                        });
+                } else {
+                    // If no image is selected, proceed without uploading an image
+                    // Generate a unique task ID
+                    String taskId = myRef.push().getKey();
+
+                    // Create a Task object without an image URL
+                    Task task = new Task(taskName, description, date, status, priority, "", uid, taskId);
+
+                    // Save the Task object to Firestore
+                    saveTaskToFirestore(uid, task);
+
+                    // Create an Intent to navigate to the homepage
+                    Intent intent = new Intent(add_task.this, homepage.class);
+                    intent.putExtra("taskName", taskName);
+                    intent.putExtra("description", description);
+                    intent.putExtra("date", date);
+                    intent.putExtra("status", status);
+                    intent.putExtra("priority", priority);
+                    intent.putExtra("imageUrl", ""); // Set empty string for imageUrl
+                    intent.putExtra("uid", uid);
+                    intent.putExtra("taskId", taskId);
+
+                    // Start the homepage activity
+                    startActivity(intent);
+                    finish();
+                }
             }
         });
-
+    }
+    private String getSelectedFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    result = cursor.getString(nameIndex);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (result == null) {
+            result = uri.getLastPathSegment();
+        }
+        return result;
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

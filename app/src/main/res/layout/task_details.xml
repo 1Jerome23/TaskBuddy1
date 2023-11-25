@@ -38,7 +38,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="601dp"
+        android:layout_height="1000dp"
         android:layout_weight="1">
 
         <LinearLayout
@@ -150,8 +150,8 @@
 
             <ImageView
                 android:id="@+id/add_file"
-                android:layout_width="295dp"
-                android:layout_height="45dp"
+                android:layout_width="313dp"
+                android:layout_height="250dp"
                 app:srcCompat="@android:drawable/screen_background_dark_transparent" />
         </LinearLayout>
     </ScrollView>
