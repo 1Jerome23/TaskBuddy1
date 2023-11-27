@@ -51,7 +51,7 @@
             android:id="@+id/homepage_search"
             android:layout_width="103dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="2dp"
             android:layout_marginTop="30dp"
             android:layout_weight="2"
             android:drawableStart="@drawable/baseline_search_24"
@@ -64,16 +64,17 @@
             android:id="@+id/homepage_sort"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="2dp"
             android:layout_marginTop="30dp"
             android:textSize="30px"
             android:backgroundTint="#FFC16E"
+            android:ems="12"
             android:fontFamily="@font/onefont"
             android:text="Sort" />
 
         <Button
             android:id="@+id/homepage_start"
-            android:layout_width="100dp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="30dp"
@@ -84,16 +85,15 @@
 
         <Button
             android:id="@+id/homepage_end"
-            android:layout_width="100dp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="30dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="1dp"
             android:backgroundTint="#FFC16E"
             android:textSize="30px"
             android:fontFamily="@font/onefont"
             android:text="End Date" />
-
 
     </LinearLayout>
     <TextView
