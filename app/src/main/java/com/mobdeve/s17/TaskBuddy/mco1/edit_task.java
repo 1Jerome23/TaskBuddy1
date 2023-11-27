@@ -195,12 +195,25 @@ public class edit_task extends AppCompatActivity {
 
     }
     private void removeImageUrl() {
-        String imageUrl = null;
+        String imageUrl = ""; // Set imageUrl to an empty string
 
         loadOrUpdateImage(imageUrl);
         closeButton.setVisibility(imageUrl != null && !imageUrl.isEmpty() ? View.VISIBLE : View.GONE);
 
+        task_rv updatedTask = new task_rv(
+                edit_name.getText().toString(),
+                spinner.getSelectedItem().toString(),
+                spinner2.getSelectedItem().toString(),
+                edit_due.getText().toString(),
+                edit_details.getText().toString(),
+                imageUrl,
+                getIntent().getStringExtra("uid"),
+                getIntent().getStringExtra("taskId")
+        );
+
+        updateTaskInFirestore(updatedTask, getIntent().getStringExtra("taskId"));
     }
+
     private void loadOrUpdateImage(String imageUrl) {
         if (imageUrl != null && !imageUrl.isEmpty()) {
             Picasso.get().load(imageUrl).into(edit_file);
@@ -211,6 +224,7 @@ public class edit_task extends AppCompatActivity {
 
     private void updateTaskInFirestore(task_rv updatedTask, String taskId) {
         Log.d("EditTask", "Updating task in Firestore");
+        Log.d("EditTask", "Task ID before update: " + taskId);
 
         if (taskId != null && !taskId.isEmpty()) {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -219,9 +233,10 @@ public class edit_task extends AppCompatActivity {
 
             DocumentReference taskDocument = tasksCollection.document(taskId);
 
-            taskDocument.update(updatedTask.toMap())
+            taskDocument.set(updatedTask.toMap(), SetOptions.merge())
                     .addOnSuccessListener(aVoid -> {
                         Log.d("FirestoreUpdate", "Task updated successfully");
+                        redirectToHomepage();
                     })
                     .addOnFailureListener(e -> {
                         Log.e("FirestoreUpdate", "Error updating task: " + e.getMessage(), e);
@@ -230,6 +245,11 @@ public class edit_task extends AppCompatActivity {
         } else {
             Log.e("FirestoreUpdate", "Task ID is null or empty");
         }
+    }
+    private void redirectToHomepage() {
+        Intent intent = new Intent(edit_task.this, homepage.class);
+        startActivity(intent);
+        finish();
     }
     private void openFilePicker() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
