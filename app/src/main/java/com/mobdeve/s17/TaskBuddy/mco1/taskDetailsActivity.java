@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
@@ -76,7 +77,27 @@ public class taskDetailsActivity extends AppCompatActivity {
             task_description.setText(description);
 
             ImageView imageView = findViewById(R.id.add_file);
-            Picasso.get().load(imageURL).into(imageView);
+            if (imageURL != null && !imageURL.isEmpty()) {
+                Log.d("PicassoDebug", "Loading image from URL: " + imageURL);
+
+                // Load the image using Picasso
+                Picasso.get().load(imageURL).into(imageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        Log.d("PicassoDebug", "Image loaded successfully");
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Log.e("PicassoDebug", "Error loading image: " + e.getMessage(), e);
+                    }
+                });
+            } else {
+                Log.d("PicassoDebug", "ImageURL is null or empty. Setting visibility to GONE.");
+
+                // Hide the ImageView since there is no valid URL
+                imageView.setVisibility(View.GONE);
+            }
 
         }
 
@@ -155,13 +176,11 @@ public class taskDetailsActivity extends AppCompatActivity {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             CollectionReference tasksCollection = db.collection("UserTask");
 
-            // Build a query to find the specific task
             Query query = tasksCollection.whereEqualTo("uid", uid).whereEqualTo("taskId", taskId);
 
             query.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        // Delete the task
                         document.getReference().delete()
                                 .addOnSuccessListener(aVoid -> {
                                     Log.d("FirestoreDelete", "Task successfully deleted");

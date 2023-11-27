@@ -251,7 +251,7 @@ public class homepage extends AppCompatActivity {
             }
 
 
-        }
+    }
         private void deleteTaskFromFirestore(String taskId, int position) {
             Log.d("FirestoreDelete", "Deleting task with ID: " + taskId + " at position: " + position);
 

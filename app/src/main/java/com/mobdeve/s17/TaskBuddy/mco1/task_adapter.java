@@ -8,8 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.TextView;
+import android.graphics.Color;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -19,8 +21,6 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
     Context context;
     List<task_rv> task_rvList;
     private OnItemClickListener onItemClickListener;
-    private List<task_rv> taskList;
-
 
     public task_adapter(Context context, List<task_rv> task_rvList){
         this.context = context;
@@ -61,6 +61,18 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
             holder.priority_rv.setText(model.getPriority());
             holder.status_rv.setText(model.getStatus());
             holder.date_rv.setText(model.getDate());
+
+            //priority colour
+            String priority = model.getPriority();
+            holder.priority_rv.setText(priority);
+
+            if(priority != null){
+                int priorityColour = getPriorityColour(model.getPriority());
+                holder.priority_rv.setTextColor(priorityColour);
+            }else{
+                holder.priority_rv.setTextColor(ContextCompat.getColor(context, R.color.black));
+            }
+
         }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,11 +116,6 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
         void onEditClick(task_rv task);
     }
 
-    public void updateData(List<task_rv> newTaskList) {
-        // Update the dataset with the new list of task_rv objects
-        this.taskList = newTaskList;
-        notifyDataSetChanged();
-    }
     private OnEditClickListener editClickListener;
 
     public void setOnEditClickListener(OnEditClickListener listener) {
@@ -129,5 +136,20 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
             status_rv = itemView.findViewById(R.id.status_rv);
             date_rv = itemView.findViewById(R.id.date_rv);
         }
+    }
+
+    private int getPriorityColour(String priority){
+        int colourID = 0;
+        switch(priority.toUpperCase()){
+            case "LOW":
+                colourID = R.color.green;
+                break;
+            case "MEDIUM":
+                colourID = R.color.amber;
+                break;
+            case "HIGH":
+                colourID = R.color.red;
+                break;
+        }return ContextCompat.getColor(context, colourID);
     }
 }

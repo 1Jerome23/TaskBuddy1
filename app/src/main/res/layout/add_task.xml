@@ -172,7 +172,10 @@
                 android:id="@+id/add_file"
                 android:layout_width="295dp"
                 android:layout_height="45dp"
-                app:srcCompat="@android:drawable/screen_background_light" />
+                android:visibility="visible"
+                android:textColor="#000000"
+
+                />
 
             <Space
                 android:layout_width="match_parent"
