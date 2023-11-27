@@ -49,9 +49,9 @@
 
         <EditText
             android:id="@+id/homepage_search"
-            android:layout_width="138dp"
+            android:layout_width="103dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="30dp"
             android:layout_weight="2"
             android:drawableStart="@drawable/baseline_search_24"
@@ -62,25 +62,37 @@
 
         <Button
             android:id="@+id/homepage_sort"
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
+            android:layout_marginLeft="5dp"
             android:layout_marginTop="30dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
+            android:textSize="30px"
             android:backgroundTint="#FFC16E"
             android:fontFamily="@font/onefont"
             android:text="Sort" />
+
         <Button
-            android:id="@+id/homepage_new_button"
-            android:layout_width="wrap_content"
+            android:id="@+id/homepage_startdate"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="30dp"
             android:backgroundTint="#FFC16E"
-            android:layout_marginRight="10dp"
             android:fontFamily="@font/onefont"
-            android:text="Filter" />
+            android:textSize="30px"
+            android:text="Start Date" />
+
+        <Button
+            android:id="@+id/homepage_enddate"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="10dp"
+            android:backgroundTint="#FFC16E"
+            android:textSize="30px"
+            android:fontFamily="@font/onefont"
+            android:text="End Date" />
 
 
     </LinearLayout>

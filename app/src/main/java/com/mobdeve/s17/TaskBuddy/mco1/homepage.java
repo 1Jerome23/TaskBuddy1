@@ -2,6 +2,8 @@ package com.mobdeve.s17.TaskBuddy.mco1;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -103,8 +105,6 @@ public class homepage extends AppCompatActivity {
             updateRecyclerViewWithNewTask(newTask);
 
         }
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
-        itemTouchHelper.attachToRecyclerView(recycler_view);
 
         homepage_profile.setOnClickListener(new View.OnClickListener() {
 
@@ -217,81 +217,93 @@ public class homepage extends AppCompatActivity {
 
         updateRecyclerView(uid);
 
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(recycler_view);
+
     }
+    private boolean isSwiping = false;
     task_rv deletedTask = null;
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT) {
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
             return false;
         }
+
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-            Log.d("Swiped", "onSwiped method called");
-
             try {
                 int position = viewHolder.getAbsoluteAdapterPosition();
-                switch(direction){
-                    case ItemTouchHelper.LEFT:
-                        if (position >= 0 && position < task_rvList.size()) {
-                            deletedTask = task_rvList.get(position);
-                            Log.d("TaskID", "Task ID to delete: " + deletedTask.getTaskId());
+                Log.d("Swiped", "Position: " + position + ", List Size: " + task_rvList.size());
 
-                            task_rvList.remove(position);
-                            adapter.notifyItemRemoved(position);
-                            adapter.deleteItem(position);
+                if (position >= 0 && position < task_rvList.size()) {
+                    deletedTask = task_rvList.get(position);
+                    Log.d("TaskID", "Task ID to delete: " + deletedTask.getTaskId());
 
-                            deleteTaskFromFirestore(deletedTask.getTaskId());
-
-                            String deletedTaskName = deletedTask.getName();
-                            Snackbar.make(recycler_view, "Deleted task: " + deletedTaskName, Snackbar.LENGTH_LONG)
-                                    .setAction("Undo", new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            task_rvList.add(position, deletedTask);
-                                            adapter.notifyItemInserted(position);
-                                        }
-                                    }).show();
-                        }
-                        break;
+                    deleteTaskFromFirestore(deletedTask.getTaskId(), position);
+                } else {
+                    Log.e("Swiped", "Invalid position: " + position);
                 }
             } catch (Exception e) {
                 Log.e("Swiped", "Error in onSwiped", e);
+                Log.e("AppCrash", "Error in deleteTaskFromFirestore", e);
+            } finally {
+                isSwiping = false;
             }
 
 
         }
-    };
+        private void deleteTaskFromFirestore(String taskId, int position) {
+            Log.d("FirestoreDelete", "Deleting task with ID: " + taskId + " at position: " + position);
 
-    private void deleteTaskFromFirestore(String taskId) {
-        Log.d("FirestoreDelete", "Deleting task with ID: " + taskId);
+            if (taskId != null && !taskId.isEmpty()) {
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                CollectionReference tasksCollection = db.collection("UserTask");
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference tasksCollection = db.collection("UserTask");
-        tasksCollection.document(taskId)
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("FirestoreDelete", "Task deleted successfully from Firestore");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("FirestoreDelete", "Error deleting task from Firestore", e);
+                Query query = tasksCollection.whereEqualTo("taskId", taskId);
+
+                query.get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            document.getReference().delete()
+                                    .addOnSuccessListener(aVoid -> {
+                                        Log.d("FirestoreDelete", "Task successfully deleted");
+                                        removeFromListAndNotify(position);                     })
+                                    .addOnFailureListener(e -> {
+                                        Log.e("FirestoreDelete", "Error deleting document: " + e.getMessage(), e);
+                                    });
+                        }
+                    } else {
+                        Log.e("FirestoreDelete", "Error getting documents: " + task.getException());
                     }
                 });
+            } else {
+                Log.e("FirestoreDelete", "Task ID is null or empty");
+            }
+        }
+
+    };
+    private void removeFromListAndNotify(int position) {
+        if (isValidPosition(position)) {
+            task_rvList.remove(position);
+            adapter.notifyItemRemoved(position);
+            adapter.notifyItemRangeChanged(position, task_rvList.size()); // Add this line
+        } else {
+            Log.d("RemoveFromList", "Invalid position: " + position);
+        }
+    }
+    private boolean isValidPosition(int position) {
+        return position >= 0 && position < task_rvList.size();
     }
 
-        private void getList(String uid) {
+    private void getList(String uid) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        List<task_rv> task_rvList = new ArrayList<>();
 
         db.collection("UserTask")
                 .whereEqualTo("uid", uid)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     Log.d("FirestoreQuery", "Querying Firestore for UID: " + uid);
+                    task_rvList.clear();
 
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Log.d("DocData", document.getId() + " => " + document.getData());
