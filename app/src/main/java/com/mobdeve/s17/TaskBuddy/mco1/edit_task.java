@@ -180,7 +180,7 @@ public class edit_task extends AppCompatActivity {
                 removeImageUrl();
             }
         });
-
+        closeButton.setVisibility(imageURL != null && !imageURL.isEmpty() ? View.VISIBLE : View.GONE);
 
     }
     private void removeImageUrl() {
