@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
@@ -42,6 +43,8 @@ public class edit_task extends AppCompatActivity {
     Spinner spinner2;
     ImageView edit_file; // Change TextView to ImageView
     Button confirm_edit;
+    ImageButton edit_profile;
+    ImageButton closeButton;
 
     private int position;
     private task_rv selectedTask;
@@ -60,6 +63,8 @@ public class edit_task extends AppCompatActivity {
         spinner2 = findViewById(R.id.spinner2);
         edit_file = findViewById(R.id.edit_file);
         confirm_edit = findViewById(R.id.confirm_edit);
+        edit_profile = findViewById(R.id.edit_profile);
+        closeButton = findViewById(R.id.closeButton);
 
         Intent intent = getIntent();
         position = intent.getIntExtra("position", -1);
@@ -97,7 +102,6 @@ public class edit_task extends AppCompatActivity {
                 }
             });
         } else {
-            // Handle the case where imageURL is empty or null, for example, hide the ImageView
             edit_file.setVisibility(View.GONE);
         }
 
@@ -135,7 +139,6 @@ public class edit_task extends AppCompatActivity {
                 Log.d("EditTask", "Updated uid: " + uid);
                 Log.d("EditTask", "Updated Status: " + imageURL);
 
-
                 task_rv updatedTask = new task_rv(
                         taskName,
                         priority,
@@ -161,7 +164,40 @@ public class edit_task extends AppCompatActivity {
                 showEditDatePickerDialog();
             }
         });
+
+        edit_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(edit_task.this, profile.class);
+                    intent.putExtra("uid", uid);
+                    startActivity(intent);
+                }
+
+        });
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeImageUrl();
+            }
+        });
+
+
     }
+    private void removeImageUrl() {
+        String imageUrl = null;
+
+        loadOrUpdateImage(imageUrl);
+        closeButton.setVisibility(imageUrl != null && !imageUrl.isEmpty() ? View.VISIBLE : View.GONE);
+
+    }
+    private void loadOrUpdateImage(String imageUrl) {
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Picasso.get().load(imageUrl).into(edit_file);
+        } else {
+            edit_file.setVisibility(View.GONE);
+        }
+    }
+
     private void updateTaskInFirestore(task_rv updatedTask, String taskId) {
         Log.d("EditTask", "Updating task in Firestore");
 
