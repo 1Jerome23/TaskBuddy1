@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
@@ -26,10 +27,12 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 public class edit_task extends AppCompatActivity {
 //
@@ -40,6 +43,8 @@ public class edit_task extends AppCompatActivity {
     Spinner spinner2;
     ImageView edit_file; // Change TextView to ImageView
     Button confirm_edit;
+    ImageButton edit_profile;
+    ImageButton closeButton;
 
     private int position;
     private task_rv selectedTask;
@@ -58,6 +63,8 @@ public class edit_task extends AppCompatActivity {
         spinner2 = findViewById(R.id.spinner2);
         edit_file = findViewById(R.id.edit_file);
         confirm_edit = findViewById(R.id.confirm_edit);
+        edit_profile = findViewById(R.id.edit_profile);
+        closeButton = findViewById(R.id.closeButton);
 
         Intent intent = getIntent();
         position = intent.getIntExtra("position", -1);
@@ -82,7 +89,22 @@ public class edit_task extends AppCompatActivity {
         Log.d("Spinner", "Task Priority: " + taskPriority);
         Log.d("Spinner", "Task Status: " + taskStatus);
 
-        Picasso.get().load(imageURL).into(edit_file);
+        if (imageURL != null && !imageURL.isEmpty()) {
+            Picasso.get().load(imageURL).into(edit_file, new Callback() {
+                @Override
+                public void onSuccess() {
+                    Log.d("PicassoDebug", "Image loaded successfully");
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Log.e("PicassoDebug", "Error loading image: " + e.getMessage(), e);
+                }
+            });
+        } else {
+            edit_file.setVisibility(View.GONE);
+        }
+
         String[] priorityItems = {"HIGH", "MEDIUM", "LOW"};
         String[] statusItems = {"NOT DONE", "IN PROGRESS", "COMPLETED"};
 
@@ -142,7 +164,40 @@ public class edit_task extends AppCompatActivity {
                 showEditDatePickerDialog();
             }
         });
+
+        edit_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(edit_task.this, profile.class);
+                    intent.putExtra("uid", uid);
+                    startActivity(intent);
+                }
+
+        });
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeImageUrl();
+            }
+        });
+        closeButton.setVisibility(imageURL != null && !imageURL.isEmpty() ? View.VISIBLE : View.GONE);
+
     }
+    private void removeImageUrl() {
+        String imageUrl = null;
+
+        loadOrUpdateImage(imageUrl);
+        closeButton.setVisibility(imageUrl != null && !imageUrl.isEmpty() ? View.VISIBLE : View.GONE);
+
+    }
+    private void loadOrUpdateImage(String imageUrl) {
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Picasso.get().load(imageUrl).into(edit_file);
+        } else {
+            edit_file.setVisibility(View.GONE);
+        }
+    }
+
     private void updateTaskInFirestore(task_rv updatedTask, String taskId) {
         Log.d("EditTask", "Updating task in Firestore");
 

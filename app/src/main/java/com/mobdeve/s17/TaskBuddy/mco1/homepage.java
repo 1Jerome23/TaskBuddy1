@@ -1,5 +1,6 @@
 package com.mobdeve.s17.TaskBuddy.mco1;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,17 +40,21 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Locale;
 
 public class homepage extends AppCompatActivity {
     int menuResourceId = R.menu.sort_menu;
 
     RecyclerView recycler_view;
+
     task_adapter adapter;
     ImageView homepage_icon;
     TextView homepage_home;
     ImageButton homepage_add;
     EditText homepage_search;
     Button homepage_sort;
+    Button homepage_start;
+    Button homepage_end;
     TextView homepage_name;
     TextView homepage_priority;
     TextView homepage_status;
@@ -61,6 +66,10 @@ public class homepage extends AppCompatActivity {
 
     TextView sort_info_text;
     List<task_rv> task_rvList = new ArrayList<>();
+    List<task_rv> filteredList = new ArrayList<>();
+    private String startDate = null;
+    private String endDate = null;
+
 
     private int currentSortOption = R.id.sort_by_letter;  // Default sorting option
     private int currentSortOrder = R.id.sort_asc;  //Default sorting order
@@ -117,6 +126,8 @@ public class homepage extends AppCompatActivity {
         homepage_homepage = (ImageButton) findViewById(R.id.homepage_homepage);
         homepage_profile = (ImageButton) findViewById(R.id.homepage_profile);
         sort_info_text = findViewById(R.id.sort_info_text);
+        homepage_start = findViewById(R.id.homepage_start);
+        homepage_end = findViewById(R.id.homepage_end);
 
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("uid")) {
@@ -140,6 +151,20 @@ public class homepage extends AppCompatActivity {
             updateRecyclerViewWithNewTask(newTask);
 
         }
+
+        homepage_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePickerDialog(homepage_start);
+            }
+        });
+
+        homepage_end.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePickerDialog(homepage_end);
+            }
+        });
 
         homepage_profile.setOnClickListener(new View.OnClickListener() {
 
@@ -250,7 +275,7 @@ public class homepage extends AppCompatActivity {
             }
         });
 
-        updateRecyclerView(uid);
+        updateRecyclerView(uid,null,null);
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(recycler_view);
@@ -330,16 +355,27 @@ public class homepage extends AppCompatActivity {
         return position >= 0 && position < task_rvList.size();
     }
 
-    private void getList(String uid) {
+    private void getList(String uid, String startDate, String endDate) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Log.d("GetList", "UID: " + uid + ", Start Date: " + startDate + ", End Date: " + endDate);
 
+        final String finalStartDate;
+        final String finalEndDate;
+
+        if (startDate == null || endDate == null || startDate.isEmpty() || endDate.isEmpty()) {
+            finalStartDate = null;
+            finalEndDate = null;
+        } else {
+            finalStartDate = startDate;
+            finalEndDate = endDate;
+        }
         db.collection("UserTask")
                 .whereEqualTo("uid", uid)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     Log.d("FirestoreQuery", "Querying Firestore for UID: " + uid);
                     task_rvList.clear();
-
+                    filteredList.clear();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Log.d("DocData", document.getId() + " => " + document.getData());
 
@@ -356,7 +392,7 @@ public class homepage extends AppCompatActivity {
                                     document.getString("taskId")
                             );
                             task_rvList.add(taskRv);
-
+                            filteredList.add(taskRv);
                         } else {
                             Log.e("FirestoreError", "Document is missing expected fields");
                         }
@@ -365,31 +401,42 @@ public class homepage extends AppCompatActivity {
                     if (task_rvList.isEmpty()) {
                     } else {
                         setRecyclerView(task_rvList);
+                        filterTasksByDates();
                     }
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(homepage.this, "Error querying Firestore", Toast.LENGTH_SHORT).show();
                 });
     }
-
+    private void filterTasksByDates() {
+        if (startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty()) {
+            Log.d("FilterTasks", "Filtering tasks by Start Date: " + startDate + ", End Date: " + endDate);
+            adapter.filterByDates(startDate, endDate);
+        }
+    }
 
     private void setRecyclerView(List<task_rv> task_rvList) {
         recycler_view.setHasFixedSize(true);
         recycler_view.setLayoutManager(new LinearLayoutManager(this));
         adapter = new task_adapter(this, task_rvList);
         recycler_view.setAdapter(adapter);
+        Log.d("Homepage", "Setting RecyclerView with " + task_rvList.size() + " tasks");
+
     }
     @Override
     protected void onResume() {
         super.onResume();
         Log.d("Homepage", "onResume called");
-        updateRecyclerView(uid);
+        updateRecyclerView(uid,null,null);
     }
 
 
-    private void updateRecyclerView(String uid) {
-        getList(uid);
+    private void updateRecyclerView(String uid, String startDate, String endDate) {
+        Log.d("UpdateRecyclerView", "Updating RecyclerView with UID: " + uid + ", Start Date: " + startDate + ", End Date: " + endDate);
+        getList(uid, startDate, endDate);
+        adapter.notifyDataSetChanged();
     }
+
     private void updateRecyclerViewWithNewTask(Task newTask) {
         List<task_rv> taskList = adapter.getTaskList();
 
@@ -405,7 +452,6 @@ public class homepage extends AppCompatActivity {
         Log.d("SortTasks", "Sort Option: " + sortOption + ", Sort Order: " + sortOrder);
         sort_info_text = findViewById(R.id.sort_info_text);
         sort_info_text.setText("Sorted by: ");
-
 
         if (sortOption == R.id.sort_by_letter) {
             // Sort by A-Z
@@ -479,12 +525,33 @@ public class homepage extends AppCompatActivity {
             return task1.getDate().compareTo(task2.getDate());
         }
     }
+    private void showDatePickerDialog(final Button button) {
+        DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
+            monthOfYear += 1;
 
+            String selectedDate = String.format(Locale.getDefault(), "%02d/%02d/%04d", monthOfYear, dayOfMonth, year);
+            button.setText(selectedDate);
 
-// List<task_rv> task_rvList = new ArrayList<>();
+            if (button == homepage_start) {
+                startDate = selectedDate;
+            } else if (button == homepage_end) {
+                endDate = selectedDate;
+            }
+            Log.d("DatePicking", "Start Date: " + startDate + ", End Date: " + endDate);
 
-    // Assuming you have an instance of task_adapter named adapter
+            updateRecyclerView(uid, startDate, endDate);
+        };
 
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                dateSetListener,
+                java.util.Calendar.getInstance().get(java.util.Calendar.YEAR),
+                java.util.Calendar.getInstance().get(java.util.Calendar.MONTH),
+                java.util.Calendar.getInstance().get(java.util.Calendar.DAY_OF_MONTH)
+        );
+
+        datePickerDialog.show();
+    }
 
     private void filterList(String text) {
         List<task_rv> filteredList = new ArrayList<>();
@@ -506,9 +573,6 @@ public class homepage extends AppCompatActivity {
             setRecyclerView(filteredList); // Update the RecyclerView with the filtered list
         }
     }
-
-
-
 
 
 

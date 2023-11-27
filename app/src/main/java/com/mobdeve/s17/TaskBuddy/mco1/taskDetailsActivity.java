@@ -42,7 +42,6 @@ public class taskDetailsActivity extends AppCompatActivity {
     TextView task_attachment;
     ImageView add_file;
     Button Back_button;
-    Button Edit_button;
     Button Delete_button;
     private String uid = "";
 
@@ -80,7 +79,6 @@ public class taskDetailsActivity extends AppCompatActivity {
             if (imageURL != null && !imageURL.isEmpty()) {
                 Log.d("PicassoDebug", "Loading image from URL: " + imageURL);
 
-                // Load the image using Picasso
                 Picasso.get().load(imageURL).into(imageView, new Callback() {
                     @Override
                     public void onSuccess() {
@@ -95,7 +93,6 @@ public class taskDetailsActivity extends AppCompatActivity {
             } else {
                 Log.d("PicassoDebug", "ImageURL is null or empty. Setting visibility to GONE.");
 
-                // Hide the ImageView since there is no valid URL
                 imageView.setVisibility(View.GONE);
             }
 
