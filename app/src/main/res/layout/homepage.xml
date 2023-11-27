@@ -47,18 +47,20 @@
         android:layout_gravity="center"
         android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/homepage_search"
-            android:layout_width="103dp"
+
+        <SearchView
+            android:id="@+id/homepage_search1"
+            android:layout_width="187dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
             android:layout_marginTop="30dp"
             android:layout_weight="2"
-            android:drawableStart="@drawable/baseline_search_24"
-            android:ems="10"
+            android:background="@drawable/search_view_bg"
             android:fontFamily="@font/onefont"
-            android:hint="Search"
-            android:maxLines="1" />
+            android:iconifiedByDefault="false"
+            android:maxLines="1"
+            android:queryHint="Search"
+            android:textSize="18sp" />
+
 
         <Button
             android:id="@+id/homepage_sort"
@@ -66,34 +68,39 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="2dp"
             android:layout_marginTop="30dp"
-            android:textSize="30px"
             android:backgroundTint="#FFC16E"
             android:ems="12"
             android:fontFamily="@font/onefont"
-            android:text="Sort" />
+            android:text="Sort"
+            android:textSize="30px" />
 
         <Button
             android:id="@+id/homepage_start"
-            android:layout_width="110dp"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="2dp"
             android:layout_marginTop="30dp"
             android:backgroundTint="#FFC16E"
             android:fontFamily="@font/onefont"
-            android:textSize="30px"
-            android:text="Start Date" />
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:text="Start Date"
+            android:textSize="30px" />
 
         <Button
             android:id="@+id/homepage_end"
-            android:layout_width="110dp"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="2dp"
             android:layout_marginTop="30dp"
             android:layout_marginRight="1dp"
             android:backgroundTint="#FFC16E"
-            android:textSize="30px"
             android:fontFamily="@font/onefont"
-            android:text="End Date" />
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:text="End Date"
+            android:textSize="30px" />
+
 
     </LinearLayout>
     <TextView

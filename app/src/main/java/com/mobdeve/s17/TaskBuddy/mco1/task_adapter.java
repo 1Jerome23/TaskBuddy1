@@ -229,4 +229,10 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
                 break;
         }return ContextCompat.getColor(context, colourID);
     }
+
+    public void setFilteredList(List<task_rv> filteredList){
+        this.task_rvList=filteredList;
+        notifyDataSetChanged();
+
+    }
 }
