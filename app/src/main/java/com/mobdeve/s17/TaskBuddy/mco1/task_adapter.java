@@ -21,8 +21,6 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
     Context context;
     List<task_rv> task_rvList;
     private OnItemClickListener onItemClickListener;
-    private List<task_rv> taskList;
-
 
     public task_adapter(Context context, List<task_rv> task_rvList){
         this.context = context;
@@ -118,11 +116,6 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
         void onEditClick(task_rv task);
     }
 
-    public void updateData(List<task_rv> newTaskList) {
-        // Update the dataset with the new list of task_rv objects
-        this.taskList = newTaskList;
-        notifyDataSetChanged();
-    }
     private OnEditClickListener editClickListener;
 
     public void setOnEditClickListener(OnEditClickListener listener) {

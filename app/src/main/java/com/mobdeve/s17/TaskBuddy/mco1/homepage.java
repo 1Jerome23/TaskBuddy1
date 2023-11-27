@@ -295,8 +295,6 @@ public class homepage extends AppCompatActivity {
         return position >= 0 && position < task_rvList.size();
     }
 
-
-
     private void getList(String uid) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
