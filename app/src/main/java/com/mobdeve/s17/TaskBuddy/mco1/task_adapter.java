@@ -139,7 +139,6 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
             holder.status_rv.setText(model.getStatus());
             holder.date_rv.setText(model.getDate());
 
-            //priority colour
             String priority = model.getPriority();
             holder.priority_rv.setText(priority);
 

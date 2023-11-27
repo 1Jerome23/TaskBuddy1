@@ -45,10 +45,13 @@ public class edit_task extends AppCompatActivity {
     Button confirm_edit;
     ImageButton edit_profile;
     ImageButton closeButton;
+    Button attachFileButton;
 
     private int position;
     private task_rv selectedTask;
     private task_adapter adapter;
+    private static final int FILE_PICKER_REQUEST_CODE = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,8 @@ public class edit_task extends AppCompatActivity {
         confirm_edit = findViewById(R.id.confirm_edit);
         edit_profile = findViewById(R.id.edit_profile);
         closeButton = findViewById(R.id.closeButton);
+        attachFileButton = findViewById(R.id.attachFileButton);
+
 
         Intent intent = getIntent();
         position = intent.getIntExtra("position", -1);
@@ -114,7 +119,6 @@ public class edit_task extends AppCompatActivity {
         add_task.CustomSpinnerAdapter priorityAdapter = addTaskInstance.new CustomSpinnerAdapter(edit_task.this, R.layout.spinner_item, priorityItems, colors);
         add_task.CustomSpinnerAdapter statusAdapter = addTaskInstance.new CustomSpinnerAdapter(edit_task.this, R.layout.spinner_item, statusItems, colors);
 
-
         priorityAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
         statusAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
 
@@ -157,6 +161,13 @@ public class edit_task extends AppCompatActivity {
                 finish();
             }
         });
+        attachFileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFilePicker();
+            }
+        });
+
 
         edit_due.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -208,17 +219,23 @@ public class edit_task extends AppCompatActivity {
 
             DocumentReference taskDocument = tasksCollection.document(taskId);
 
-            taskDocument.set(updatedTask.toMap(), SetOptions.merge())
+            taskDocument.update(updatedTask.toMap())
                     .addOnSuccessListener(aVoid -> {
                         Log.d("FirestoreUpdate", "Task updated successfully");
                     })
                     .addOnFailureListener(e -> {
-                        Log.e("FirestoreUpdate", "Error updating task: " + e.getMessage());
+                        Log.e("FirestoreUpdate", "Error updating task: " + e.getMessage(), e);
                     });
 
         } else {
             Log.e("FirestoreUpdate", "Task ID is null or empty");
         }
+    }
+    private void openFilePicker() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        startActivityForResult(intent, FILE_PICKER_REQUEST_CODE);
     }
 
     private void setSpinnerSelection(Spinner spinner, String selectedItem) {

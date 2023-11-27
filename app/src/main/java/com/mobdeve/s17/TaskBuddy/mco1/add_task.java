@@ -169,8 +169,6 @@ public class add_task extends AppCompatActivity {
             }
         });
 
-
-
         attachFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
