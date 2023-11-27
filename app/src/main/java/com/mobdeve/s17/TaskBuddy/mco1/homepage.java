@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,6 +65,9 @@ public class homepage extends AppCompatActivity {
     private int currentSortOption = R.id.sort_by_letter;  // Default sorting option
     private int currentSortOrder = R.id.sort_asc;  //Default sorting order
 
+    private SearchView homepage_search1;
+    private String previousSearchText = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +79,38 @@ public class homepage extends AppCompatActivity {
         homepage_icon = (ImageView) findViewById(R.id.homepage_icon);
         homepage_home = (TextView) findViewById(R.id.homepage_home);
         homepage_add = (ImageButton) findViewById(R.id.homepage_add);
-        homepage_search = (EditText) findViewById(R.id.homepage_search);
+        //homepage_search = (EditText) findViewById(R.id.homepage_search);
+        homepage_search1 = (SearchView) findViewById(R.id.homepage_search1);
+        homepage_search1.clearFocus();
+        homepage_search1.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.length()==0){
+                    setRecyclerView(task_rvList);
+                }
+                else if (newText.length() < previousSearchText.length()){
+                    // Backspace detected, update the list
+                    filterList(newText);
+                }
+                else
+                {
+                    //no backspace
+                filterList(newText);
+                }
+
+                // Update the previous search text
+                previousSearchText = newText;
+                return true;
+
+            }
+        });
+
+
         homepage_sort = (Button) findViewById(R.id.homepage_sort);
 
         homepage_footer = (ImageView) findViewById(R.id.homepage_footer);
@@ -442,6 +477,33 @@ public class homepage extends AppCompatActivity {
         @Override
         public int compare(task_rv task1, task_rv task2) {
             return task1.getDate().compareTo(task2.getDate());
+        }
+    }
+
+
+// List<task_rv> task_rvList = new ArrayList<>();
+
+    // Assuming you have an instance of task_adapter named adapter
+
+
+    private void filterList(String text) {
+        List<task_rv> filteredList = new ArrayList<>();
+        List<task_rv> fullList = adapter.getTaskList(); // Store the full list of tasks
+
+        if (text.isEmpty()) {
+            // If the search text is empty, show all tasks
+            setRecyclerView(fullList);
+        } else {
+            // Filter the list based on the search text
+            for (task_rv task : fullList) {
+                if (task.getName().toLowerCase().contains(text.toLowerCase())) {
+                    filteredList.add(task);
+                }
+            }
+            if (filteredList.isEmpty()) {
+                Toast.makeText(this, "No data found", Toast.LENGTH_SHORT).show();
+            }
+            setRecyclerView(filteredList); // Update the RecyclerView with the filtered list
         }
     }
 
