@@ -26,10 +26,12 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 public class edit_task extends AppCompatActivity {
 //
@@ -82,7 +84,23 @@ public class edit_task extends AppCompatActivity {
         Log.d("Spinner", "Task Priority: " + taskPriority);
         Log.d("Spinner", "Task Status: " + taskStatus);
 
-        Picasso.get().load(imageURL).into(edit_file);
+        if (imageURL != null && !imageURL.isEmpty()) {
+            Picasso.get().load(imageURL).into(edit_file, new Callback() {
+                @Override
+                public void onSuccess() {
+                    Log.d("PicassoDebug", "Image loaded successfully");
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Log.e("PicassoDebug", "Error loading image: " + e.getMessage(), e);
+                }
+            });
+        } else {
+            // Handle the case where imageURL is empty or null, for example, hide the ImageView
+            edit_file.setVisibility(View.GONE);
+        }
+
         String[] priorityItems = {"HIGH", "MEDIUM", "LOW"};
         String[] statusItems = {"NOT DONE", "IN PROGRESS", "COMPLETED"};
 
@@ -116,6 +134,7 @@ public class edit_task extends AppCompatActivity {
                 Log.d("EditTask", "Updated id: " + taskId);
                 Log.d("EditTask", "Updated uid: " + uid);
                 Log.d("EditTask", "Updated Status: " + imageURL);
+
 
                 task_rv updatedTask = new task_rv(
                         taskName,

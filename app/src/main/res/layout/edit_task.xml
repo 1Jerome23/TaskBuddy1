@@ -191,12 +191,21 @@
                 android:layout_height="5dp" />
 
             <Button
+                android:id="@+id/confirm_delete"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FFC16E"
+                android:fontFamily="@font/onefont"
+                android:text="Delete Image" />
+
+            <Button
                 android:id="@+id/confirm_edit"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#FFC16E"
                 android:fontFamily="@font/onefont"
                 android:text="Edit Task" />
+
 
         </LinearLayout>
     </ScrollView>
