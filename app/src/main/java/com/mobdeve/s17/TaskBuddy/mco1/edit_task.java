@@ -195,7 +195,7 @@ public class edit_task extends AppCompatActivity {
 
     }
     private void removeImageUrl() {
-        String imageUrl = ""; // Set imageUrl to an empty string
+        String imageUrl = "";
 
         loadOrUpdateImage(imageUrl);
         closeButton.setVisibility(imageUrl != null && !imageUrl.isEmpty() ? View.VISIBLE : View.GONE);
@@ -206,7 +206,7 @@ public class edit_task extends AppCompatActivity {
                 spinner2.getSelectedItem().toString(),
                 edit_due.getText().toString(),
                 edit_details.getText().toString(),
-                imageUrl,
+                imageUrl, // Updated imageUrl
                 getIntent().getStringExtra("uid"),
                 getIntent().getStringExtra("taskId")
         );
