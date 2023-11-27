@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 import android.graphics.Color;
 
@@ -14,18 +16,91 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
-public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> {
+public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> implements Filterable {
 
     Context context;
     List<task_rv> task_rvList;
+    private List<task_rv> filteredList;
+
     private OnItemClickListener onItemClickListener;
 
     public task_adapter(Context context, List<task_rv> task_rvList){
         this.context = context;
         this.task_rvList = task_rvList;
     }
+    public void setTasks(List<task_rv> tasks) {
+        this.task_rvList = tasks;
+        this.filteredList = new ArrayList<>(tasks);
+        notifyDataSetChanged();
+    }
+
+    public void filterByDates(String startDate, String endDate) {
+        Log.d("TaskAdapter", "filterByDates called");
+
+        if (filteredList == null) {
+            filteredList = new ArrayList<>();
+        }
+
+        filteredList.clear();
+
+        if (startDate == null || endDate == null || startDate.isEmpty() || endDate.isEmpty()) {
+            filteredList.addAll(task_rvList);
+            Log.d("TaskAdapter", "No filtering needed");
+
+        } else {
+            for (task_rv task : task_rvList) {
+                if (isDateInRange(task.getDate(), startDate, endDate)) {
+                    filteredList.add(task);
+                }
+            }
+            Log.d("TaskAdapter", "Filtered tasks count: " + filteredList.size());
+
+        }
+        task_rvList.clear();
+        task_rvList.addAll(filteredList);
+
+        notifyDataSetChanged();
+    }
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                // Leave this empty
+                return null;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                // Leave this empty
+            }
+        };
+    }
+
+
+    private boolean isDateInRange(String date, String startDate, String endDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+
+        try {
+            Date taskDateTime = sdf.parse(date);
+            Date startDateTime = sdf.parse(startDate);
+            Date endDateTime = sdf.parse(endDate);
+
+            return taskDateTime != null && !taskDateTime.before(startDateTime) && !taskDateTime.after(endDateTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -40,6 +115,7 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
         }
     }
 
+
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.onItemClickListener = listener;
     }
@@ -50,6 +126,7 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
     public void updateTask(task_rv updatedTask, int position) {
         if (position >= 0 && position < task_rvList.size()) {
             task_rvList.set(position, updatedTask);
+            filteredList.set(position, updatedTask);
             notifyDataSetChanged();
         }
     }
@@ -110,6 +187,7 @@ public class task_adapter extends RecyclerView.Adapter<task_adapter.ViewHolder> 
 
     public void addTask(task_rv task) {
         task_rvList.add(0, task);
+        filteredList.add(0, task);
         notifyDataSetChanged();
     }
     public interface OnEditClickListener {
