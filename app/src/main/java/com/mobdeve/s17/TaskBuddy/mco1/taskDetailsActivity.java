@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -183,6 +184,7 @@ public class taskDetailsActivity extends AppCompatActivity {
                         document.getReference().delete()
                                 .addOnSuccessListener(aVoid -> {
                                     Log.d("FirestoreDelete", "Task successfully deleted");
+
                                 })
                                 .addOnFailureListener(e -> {
                                     Log.e("FirestoreDelete", "Error deleting document: " + e.getMessage(), e);

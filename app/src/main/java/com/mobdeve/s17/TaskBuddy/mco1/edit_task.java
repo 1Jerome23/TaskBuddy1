@@ -26,11 +26,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -70,9 +73,7 @@ public class edit_task extends AppCompatActivity {
         closeButton = findViewById(R.id.closeButton);
         attachFileButton = findViewById(R.id.attachFileButton);
 
-
         Intent intent = getIntent();
-        position = intent.getIntExtra("position", -1);
         String taskId = intent.getStringExtra("taskId");
         String uid = intent.getStringExtra("uid");
         Log.d("EditTask", "Received uid: " + uid);
@@ -134,14 +135,22 @@ public class edit_task extends AppCompatActivity {
                 String priority = spinner.getSelectedItem().toString();
                 String status = spinner2.getSelectedItem().toString();
 
-                Log.d("EditTask", "Updated Name: " + taskName);
-                Log.d("EditTask", "Updated Due Date: " + date);
-                Log.d("EditTask", "Updated Details: " + description);
-                Log.d("EditTask", "Updated Priority: " + priority);
-                Log.d("EditTask", "Updated Status: " + status);
-                Log.d("EditTask", "Updated id: " + taskId);
-                Log.d("EditTask", "Updated uid: " + uid);
-                Log.d("EditTask", "Updated Status: " + imageURL);
+                Log.d("NEWLOG", "Updated Name: " + taskName);
+                Log.d("NEWLOG", "Updated Due Date: " + date);
+                Log.d("NEWLOG", "Updated Details: " + description);
+                Log.d("NEWLOG", "Updated Priority: " + priority);
+                Log.d("NEWLOG", "Updated Status: " + status);
+                Log.d("NEWLOG", "Updated task id: " + taskId);
+                Log.d("NEWLOG", "Updated uid: " + uid);
+                Log.d("NEWLOG", "Updated Status: " + imageURL);
+
+                String taskId = getIntent().getStringExtra("taskId");
+                if (taskId == null || taskId.isEmpty()) {
+                    Log.e("ID CHECK", "Error: taskId is null or empty");
+                    return;
+                }
+
+                Log.d("ID CHECK", "Updated task id: " + taskId);
 
                 task_rv updatedTask = new task_rv(
                         taskName,
@@ -154,7 +163,7 @@ public class edit_task extends AppCompatActivity {
                         taskId
                 );
 
-                updateTaskInFirestore(updatedTask, taskId);
+                updateTaskInFirestore(updatedTask, uid,taskId );
                 Intent intent = new Intent(edit_task.this, homepage.class);
                 startActivity(intent);
 
@@ -196,7 +205,6 @@ public class edit_task extends AppCompatActivity {
     }
     private void removeImageUrl() {
         String imageUrl = "";
-
         loadOrUpdateImage(imageUrl);
         closeButton.setVisibility(imageUrl != null && !imageUrl.isEmpty() ? View.VISIBLE : View.GONE);
 
@@ -206,13 +214,14 @@ public class edit_task extends AppCompatActivity {
                 spinner2.getSelectedItem().toString(),
                 edit_due.getText().toString(),
                 edit_details.getText().toString(),
-                imageUrl, // Updated imageUrl
+                imageUrl,  // Set imageUrl to an empty string
                 getIntent().getStringExtra("uid"),
                 getIntent().getStringExtra("taskId")
         );
 
-        updateTaskInFirestore(updatedTask, getIntent().getStringExtra("taskId"));
+        updateTaskInFirestore(updatedTask,getIntent().getStringExtra("uid"), getIntent().getStringExtra("taskId"));
     }
+
 
     private void loadOrUpdateImage(String imageUrl) {
         if (imageUrl != null && !imageUrl.isEmpty()) {
@@ -221,36 +230,41 @@ public class edit_task extends AppCompatActivity {
             edit_file.setVisibility(View.GONE);
         }
     }
-
-    private void updateTaskInFirestore(task_rv updatedTask, String taskId) {
+    private void updateTaskInFirestore(task_rv updatedTask, String uid, String taskId) {
         Log.d("EditTask", "Updating task in Firestore");
         Log.d("EditTask", "Task ID before update: " + taskId);
+        Log.d("EditTask", "Updated Task - Name: " + updatedTask.getName());
+        Log.d("EditTask", "Updated Task - Priority: " + updatedTask.getPriority());
+        Log.d("EditTask", "Updated Task - Status: " + updatedTask.getStatus());
 
-        if (taskId != null && !taskId.isEmpty()) {
+        if (uid != null && !uid.isEmpty() && taskId != null && !taskId.isEmpty()) {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-
             CollectionReference tasksCollection = db.collection("UserTask");
 
-            DocumentReference taskDocument = tasksCollection.document(taskId);
+            Query query = tasksCollection.whereEqualTo("uid", uid).whereEqualTo("taskId", taskId);
 
-            taskDocument.set(updatedTask.toMap(), SetOptions.merge())
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d("FirestoreUpdate", "Task updated successfully");
-                        redirectToHomepage();
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("FirestoreUpdate", "Error updating task: " + e.getMessage(), e);
-                    });
-
+            query.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        document.getReference().set(updatedTask.toMap(), SetOptions.merge())
+                                .addOnSuccessListener(aVoid -> {
+                                    Log.d("FirestoreUpdate", "Task updated successfully");
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("FirestoreUpdate", "Error updating task: " + e.getMessage(), e);
+                                });
+                    }
+                } else {
+                    Log.e("FirestoreUpdate", "Error getting documents: " + task.getException());
+                }
+            });
         } else {
-            Log.e("FirestoreUpdate", "Task ID is null or empty");
+            Log.e("FirestoreUpdate", "UID or Task ID is null or empty");
         }
     }
-    private void redirectToHomepage() {
-        Intent intent = new Intent(edit_task.this, homepage.class);
-        startActivity(intent);
-        finish();
-    }
+
+
+
     private void openFilePicker() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
