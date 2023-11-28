@@ -38,13 +38,13 @@ import java.util.List;
 import java.util.Map;
 
 public class edit_task extends AppCompatActivity {
-//
+
     EditText edit_name;
     EditText edit_due;
     EditText edit_details;
     Spinner spinner;
     Spinner spinner2;
-    ImageView edit_file; // Change TextView to ImageView
+    ImageView edit_file;
     Button confirm_edit;
     ImageButton edit_profile;
     ImageButton closeButton;
@@ -61,7 +61,6 @@ public class edit_task extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_task);
 
-        // Initialize UI elements
         edit_name = findViewById(R.id.edit_name);
         edit_due = findViewById(R.id.edit_due);
         edit_details = findViewById(R.id.edit_details);
@@ -76,8 +75,6 @@ public class edit_task extends AppCompatActivity {
         Intent intent = getIntent();
         String taskId = intent.getStringExtra("taskId");
         String uid = intent.getStringExtra("uid");
-        Log.d("EditTask", "Received uid: " + uid);
-        Log.d("EditTask", "Received taskId: " + taskId);
 
         String taskName = intent.getStringExtra("taskName");
         String taskDate = intent.getStringExtra("taskDate");
@@ -92,8 +89,6 @@ public class edit_task extends AppCompatActivity {
 
         setSpinnerSelection(spinner, taskStatus);
         setSpinnerSelection(spinner2, taskPriority);
-        Log.d("Spinner", "Task Priority: " + taskPriority);
-        Log.d("Spinner", "Task Status: " + taskStatus);
 
         if (imageURL != null && !imageURL.isEmpty()) {
             Picasso.get().load(imageURL).into(edit_file, new Callback() {
@@ -135,22 +130,10 @@ public class edit_task extends AppCompatActivity {
                 String priority = spinner.getSelectedItem().toString();
                 String status = spinner2.getSelectedItem().toString();
 
-                Log.d("NEWLOG", "Updated Name: " + taskName);
-                Log.d("NEWLOG", "Updated Due Date: " + date);
-                Log.d("NEWLOG", "Updated Details: " + description);
-                Log.d("NEWLOG", "Updated Priority: " + priority);
-                Log.d("NEWLOG", "Updated Status: " + status);
-                Log.d("NEWLOG", "Updated task id: " + taskId);
-                Log.d("NEWLOG", "Updated uid: " + uid);
-                Log.d("NEWLOG", "Updated Status: " + imageURL);
-
                 String taskId = getIntent().getStringExtra("taskId");
                 if (taskId == null || taskId.isEmpty()) {
-                    Log.e("ID CHECK", "Error: taskId is null or empty");
                     return;
                 }
-
-                Log.d("ID CHECK", "Updated task id: " + taskId);
 
                 task_rv updatedTask = new task_rv(
                         taskName,
@@ -164,19 +147,19 @@ public class edit_task extends AppCompatActivity {
                 );
 
                 updateTaskInFirestore(updatedTask, uid,taskId );
-                Intent intent = new Intent(edit_task.this, homepage.class);
-                startActivity(intent);
+                Intent resultIntent = new Intent(edit_task.this, homepage.class);
+                resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(resultIntent);
 
                 finish();
             }
         });
-        attachFileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openFilePicker();
-            }
-        });
-
+//        attachFileButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                openFilePicker();
+//            }
+//        });
 
         edit_due.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -214,14 +197,13 @@ public class edit_task extends AppCompatActivity {
                 spinner2.getSelectedItem().toString(),
                 edit_due.getText().toString(),
                 edit_details.getText().toString(),
-                imageUrl,  // Set imageUrl to an empty string
+                imageUrl,
                 getIntent().getStringExtra("uid"),
                 getIntent().getStringExtra("taskId")
         );
 
         updateTaskInFirestore(updatedTask,getIntent().getStringExtra("uid"), getIntent().getStringExtra("taskId"));
     }
-
 
     private void loadOrUpdateImage(String imageUrl) {
         if (imageUrl != null && !imageUrl.isEmpty()) {
@@ -231,11 +213,6 @@ public class edit_task extends AppCompatActivity {
         }
     }
     private void updateTaskInFirestore(task_rv updatedTask, String uid, String taskId) {
-        Log.d("EditTask", "Updating task in Firestore");
-        Log.d("EditTask", "Task ID before update: " + taskId);
-        Log.d("EditTask", "Updated Task - Name: " + updatedTask.getName());
-        Log.d("EditTask", "Updated Task - Priority: " + updatedTask.getPriority());
-        Log.d("EditTask", "Updated Task - Status: " + updatedTask.getStatus());
 
         if (uid != null && !uid.isEmpty() && taskId != null && !taskId.isEmpty()) {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -263,26 +240,22 @@ public class edit_task extends AppCompatActivity {
         }
     }
 
+//    private void openFilePicker() {
+//        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+//        intent.addCategory(Intent.CATEGORY_OPENABLE);
+//        intent.setType("*/*");
+//        startActivityForResult(intent, FILE_PICKER_REQUEST_CODE);
+//    }
 
-
-    private void openFilePicker() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("*/*");
-        startActivityForResult(intent, FILE_PICKER_REQUEST_CODE);
-    }
-
-    private void setSpinnerSelection(Spinner spinner, String selectedItem) {
-        Log.d("Spinner", "Setting selection to: " + selectedItem);
+    private void setSpinnerSelection(Spinner spinner, String selectedItem) { //getting the spinner items
         for (int i = 0; i < spinner.getCount(); i++) {
             if (spinner.getItemAtPosition(i).toString().equals(selectedItem)) {
                 spinner.setSelection(i);
-                Log.d("Spinner", "Selection set successfully");
                 break;
             }
         }
     }
-    private void showEditDatePickerDialog() {
+    private void showEditDatePickerDialog() { //for getting date in calendar
         DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -290,7 +263,6 @@ public class edit_task extends AppCompatActivity {
                     String selectedDate = String.format("%02d/%02d/%d", monthOfYear + 1, dayOfMonth, year);
                     edit_due.setText(selectedDate);
                 } catch (Exception e) {
-                    Log.e("DatePicker", "Error setting date: " + e.getMessage());
                     e.printStackTrace();
                 }
             }

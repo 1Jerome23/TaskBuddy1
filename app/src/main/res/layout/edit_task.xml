@@ -195,13 +195,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="5dp" />
 
-            <Button
-                android:id="@+id/attachFileButton"
-                android:layout_width="295dp"
-                android:layout_height="50dp"
-                android:backgroundTint="#D3D3D3"
-                android:fontFamily="@font/onefont"
-                android:text="Upload Image" />
+<!--            <Button-->
+<!--                android:id="@+id/attachFileButton"-->
+<!--                android:layout_width="295dp"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:backgroundTint="#D3D3D3"-->
+<!--                android:fontFamily="@font/onefont"-->
+<!--                android:text="Upload Image" />-->
 
             <Space
                 android:layout_width="match_parent"

@@ -36,16 +36,9 @@ public class taskDetailsActivity extends AppCompatActivity {
 
     TextView task_name;
     TextView task_description;
-    TextView task_due;
     TextView task_date;
-    TextView task_textStatus;
     TextView task_status;
-    TextView task_duepriority;
     TextView task_priority;
-    TextView task_attachment;
-    ImageView add_file;
-    Button Back_button;
-    Button Delete_button;
     private String uid = "";
 
     @Override
@@ -63,8 +56,6 @@ public class taskDetailsActivity extends AppCompatActivity {
             String imageURL = intent.getStringExtra("imageUrl");
             String taskId = getIntent().getStringExtra("taskId");
             String uid = getIntent().getStringExtra("uid");
-            Log.d("CHECKER", "Received uid: " + uid);
-            Log.d("CHECKER", "Received taskId: " + taskId);
 
             task_name = findViewById(R.id.task_name);
             task_date = findViewById(R.id.task_date);
@@ -80,8 +71,6 @@ public class taskDetailsActivity extends AppCompatActivity {
 
             ImageView imageView = findViewById(R.id.add_file);
             if (imageURL != null && !imageURL.isEmpty()) {
-                Log.d("PicassoDebug", "Loading image from URL: " + imageURL);
-
                 Picasso.get().load(imageURL).into(imageView, new Callback() {
                     @Override
                     public void onSuccess() {
@@ -144,7 +133,6 @@ public class taskDetailsActivity extends AppCompatActivity {
                 startActivity(editIntent);
             }
         });
-
 
         Button deleteButton = findViewById(R.id.Delete_button);
         deleteButton.setOnClickListener(new View.OnClickListener() {

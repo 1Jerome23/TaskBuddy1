@@ -64,27 +64,8 @@ import java.util.Calendar;
 public class add_task extends AppCompatActivity {
     private static final int FILE_PICKER_REQUEST_CODE = 2;
 
-    ImageView add_icon;
-    TextView add_create;
-    TextView add_title;
-    EditText add_name;
-    Spinner spinner;
-    Spinner spinner2;
-    TextView add_due_date;
     EditText add_due;
-    TextView add_text_detail;
-    EditText add_details;
-    TextView add_attachments;
-    ImageView imageView;
-    Button attachFileButton;
-    Button add_confirm;
-    ImageView add_footer;
-    ImageButton add_homepage;
-    ImageButton add_profile;
-    ImageButton add_calendar;
-    TextView add_priority_task;
-    TextView add_status_task;
-    TextView add_file;
+
     public String uid = "";
     private Uri selectedFileUri;
     private static final int PICK_FILE_REQUEST = 2;

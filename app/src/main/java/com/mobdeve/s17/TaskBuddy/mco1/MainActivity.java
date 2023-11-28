@@ -40,9 +40,6 @@ public class MainActivity extends AppCompatActivity {
     EditText RegisterPassword;
     Button RegisterSubmit;
     TextView RegisterMessage;
-    private String fullName;
-    private String email;
-    private String password;
     private FirebaseFirestore db;
 
     private SharedPreferences sharedPreferences;

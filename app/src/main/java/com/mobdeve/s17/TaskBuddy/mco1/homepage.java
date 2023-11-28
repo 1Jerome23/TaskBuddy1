@@ -46,19 +46,13 @@ public class homepage extends AppCompatActivity {
     int menuResourceId = R.menu.sort_menu;
 
     RecyclerView recycler_view;
-
     task_adapter adapter;
     ImageView homepage_icon;
     TextView homepage_home;
     ImageButton homepage_add;
-    EditText homepage_search;
     Button homepage_sort;
     Button homepage_start;
     Button homepage_end;
-    TextView homepage_name;
-    TextView homepage_priority;
-    TextView homepage_status;
-    TextView homepage_date;
     ImageView homepage_footer;
     ImageButton homepage_homepage;
     ImageButton homepage_profile;
@@ -293,15 +287,12 @@ public class homepage extends AppCompatActivity {
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             try {
                 int position = viewHolder.getAbsoluteAdapterPosition();
-                Log.d("Swiped", "Position: " + position + ", List Size: " + task_rvList.size());
 
                 if (position >= 0 && position < task_rvList.size()) {
                     deletedTask = task_rvList.get(position);
-                    Log.d("TaskID", "Task ID to delete: " + deletedTask.getTaskId());
 
                     deleteTaskFromFirestore(deletedTask.getTaskId(), position);
                 } else {
-                    Log.e("Swiped", "Invalid position: " + position);
                 }
             } catch (Exception e) {
                 Log.e("Swiped", "Error in onSwiped", e);
@@ -373,12 +364,9 @@ public class homepage extends AppCompatActivity {
                 .whereEqualTo("uid", uid)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    Log.d("FirestoreQuery", "Querying Firestore for UID: " + uid);
                     task_rvList.clear();
                     filteredList.clear();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        Log.d("DocData", document.getId() + " => " + document.getData());
-
                         if (document.contains("taskName") && document.contains("priority")
                                 && document.contains("status") && document.contains("date")) {
                             task_rv taskRv = new task_rv(
@@ -410,7 +398,6 @@ public class homepage extends AppCompatActivity {
     }
     private void filterTasksByDates() {
         if (startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty()) {
-            Log.d("FilterTasks", "Filtering tasks by Start Date: " + startDate + ", End Date: " + endDate);
             adapter.filterByDates(startDate, endDate);
         }
     }
@@ -420,19 +407,16 @@ public class homepage extends AppCompatActivity {
         recycler_view.setLayoutManager(new LinearLayoutManager(this));
         adapter = new task_adapter(this, task_rvList);
         recycler_view.setAdapter(adapter);
-        Log.d("Homepage", "Setting RecyclerView with " + task_rvList.size() + " tasks");
 
     }
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("Homepage", "onResume called");
         updateRecyclerView(uid,null,null);
     }
 
 
     private void updateRecyclerView(String uid, String startDate, String endDate) {
-        Log.d("UpdateRecyclerView", "Updating RecyclerView with UID: " + uid + ", Start Date: " + startDate + ", End Date: " + endDate);
         getList(uid, startDate, endDate);
         adapter.notifyDataSetChanged();
     }
@@ -472,7 +456,6 @@ public class homepage extends AppCompatActivity {
             sort_info_text.append("Due Date, Order: " + (sortOrder == R.id.sort_asc ? "Earliest to Latest" : "Latest to Earliest"));
             Collections.sort(taskList, new DueDateComparator());
         }
-
         // Check the sort order and reverse the list if descending
         if (sortOrder == R.id.sort_desc) {
             Collections.reverse(taskList);
@@ -537,8 +520,6 @@ public class homepage extends AppCompatActivity {
             } else if (button == homepage_end) {
                 endDate = selectedDate;
             }
-            Log.d("DatePicking", "Start Date: " + startDate + ", End Date: " + endDate);
-
             updateRecyclerView(uid, startDate, endDate);
         };
 
@@ -570,7 +551,7 @@ public class homepage extends AppCompatActivity {
             if (filteredList.isEmpty()) {
                 Toast.makeText(this, "No data found", Toast.LENGTH_SHORT).show();
             }
-            setRecyclerView(filteredList); // Update the RecyclerView with the filtered list
+            setRecyclerView(filteredList);
         }
     }
 
