@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -181,7 +182,7 @@ public class taskDetailsActivity extends AppCompatActivity {
                         document.getReference().delete()
                                 .addOnSuccessListener(aVoid -> {
                                     Log.d("FirestoreDelete", "Task successfully deleted");
-
+                                    showToast("Task successfully deleted");
                                 })
                                 .addOnFailureListener(e -> {
                                     Log.e("FirestoreDelete", "Error deleting document: " + e.getMessage(), e);
@@ -194,5 +195,10 @@ public class taskDetailsActivity extends AppCompatActivity {
         } else {
             Log.e("FirestoreDelete", "UID or Task ID is null or empty");
         }
+    }
+    private void showToast(String message) {
+        runOnUiThread(() -> {
+            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+        });
     }
 }
