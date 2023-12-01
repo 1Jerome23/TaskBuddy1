@@ -54,7 +54,7 @@ public class login extends AppCompatActivity {
 
         //function is called to skip the login page if a shared preference is present
 
-
+//11
 
         //SUBMIT INTENT
         LoginSubmit.setOnClickListener(new View.OnClickListener() {
