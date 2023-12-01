@@ -41,6 +41,9 @@ public class taskDetailsActivity extends AppCompatActivity {
     TextView task_priority;
     private String uid = "";
 
+    //reload counter for homepage
+    int reloadCounter = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,11 +147,17 @@ public class taskDetailsActivity extends AppCompatActivity {
                 if (uid != null && taskId != null) {
                     Log.d("DeleteTask", "Deleting task with ID: " + taskId + " for UID: " + uid);
                     deleteTask(uid, taskId);
+
+                    reloadCounter = 1;
+
+
                 } else {
                     Log.e("DeleteTask", "UID or Task ID is null");
                 }
 
                 Intent intent = new Intent(taskDetailsActivity.this, homepage.class);
+                intent.putExtra("reloadCounter", reloadCounter);
+                reloadCounter = 0;
                 startActivity(intent);
                 finish();
             }

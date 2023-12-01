@@ -70,6 +70,8 @@ public class homepage extends AppCompatActivity {
 
     private SearchView homepage_search1;
     private String previousSearchText = "";
+    //private boolean reloadNeeded = false;
+    int reloadCounter = 0;
 
 
     @Override
@@ -114,6 +116,7 @@ public class homepage extends AppCompatActivity {
         });
 
 
+
         homepage_sort = (Button) findViewById(R.id.homepage_sort);
 
         homepage_footer = (ImageView) findViewById(R.id.homepage_footer);
@@ -145,6 +148,9 @@ public class homepage extends AppCompatActivity {
             updateRecyclerViewWithNewTask(newTask);
 
         }
+
+        //reload Activity once a delete is made
+        reloadAct();
 
         homepage_start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -413,6 +419,7 @@ public class homepage extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         updateRecyclerView(uid,null,null);
+
     }
 
 
@@ -555,11 +562,26 @@ public class homepage extends AppCompatActivity {
         }
     }
 
+    private void reloadAct(){
+        Intent intent = new Intent(homepage.this, homepage.class);
+        Bundle extras = getIntent().getExtras();
+
+        if(extras != null){
+            reloadCounter = extras.getInt("reloadCounter");
+            Log.e("checkreload", "reloadAct engaging");
+        }
+
+        //a delete is made
+        if(reloadCounter == 1){
+            Log.e("checkreload", "reloadCounter: " + reloadCounter );
+            reloadCounter = 0;
+            Log.e("checkreload", "updated Counter: " + reloadCounter );
+            this.recreate();
+
+        }
 
 
-
-
-
+    }
 
 
 }
