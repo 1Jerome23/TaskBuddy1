@@ -356,16 +356,6 @@ public class homepage extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Log.d("GetList", "UID: " + uid + ", Start Date: " + startDate + ", End Date: " + endDate);
 
-        final String finalStartDate;
-        final String finalEndDate;
-
-        if (startDate == null || endDate == null || startDate.isEmpty() || endDate.isEmpty()) {
-            finalStartDate = null;
-            finalEndDate = null;
-        } else {
-            finalStartDate = startDate;
-            finalEndDate = endDate;
-        }
         db.collection("UserTask")
                 .whereEqualTo("uid", uid)
                 .get()
