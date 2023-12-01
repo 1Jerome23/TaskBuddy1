@@ -355,7 +355,6 @@ public class homepage extends AppCompatActivity {
     private void getList(String uid, String startDate, String endDate) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Log.d("GetList", "UID: " + uid + ", Start Date: " + startDate + ", End Date: " + endDate);
-
         db.collection("UserTask")
                 .whereEqualTo("uid", uid)
                 .get()
